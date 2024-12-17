@@ -1,6 +1,7 @@
 package go.model.game;
 
 import go.model.interfaces.Color;
+import go.util.ConsoleColors;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -202,5 +203,52 @@ public class Board {
             }
         }
         return true;
+    }
+
+    /**
+     * Creates a deep copy of the current board.
+     * @return a new board instance with identical square values as the original board
+     */
+    public Board deepCopy() {
+        Board copy = new Board();
+        for (int i = 0; i < DIM * DIM; i++) {
+            copy.squares.set(i, this.squares.get(i));
+        }
+        return copy;
+    }
+
+    /**
+     * Generates a string representation of the current board.
+     * Hardcoded to DIM = 7.
+     * @return a string representing the board
+     */
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Board:\n");
+
+        sb.append((ConsoleColors.YELLOW_BOLD_BRIGHT + "+" + ConsoleColors.RED_BOLD_BRIGHT +
+                "---").repeat(DIM));
+        sb.append(ConsoleColors.YELLOW_BOLD_BRIGHT + "+\n");
+
+        for (int i = 0; i < DIM; i++) {
+            for (int j = 0; j < DIM; j++) {
+                sb.append(ConsoleColors.RED_BOLD_BRIGHT + "|" + ConsoleColors.RESET);
+                switch (this.squares.get(i * DIM + j)) {
+                    case BLACK -> sb.append(ConsoleColors.PURPLE_BOLD_BRIGHT + " O ");
+                    case WHITE -> sb.append(ConsoleColors.WHITE_BOLD_BRIGHT + " O ");
+                    case EMPTY -> {
+                        if (i == 0) sb.append(ConsoleColors.WHITE + " " + j + " ");
+                        else if (j == 0) sb.append(ConsoleColors.WHITE + " " + i + " ");
+                        else sb.append("   ");
+                    }
+                }
+            }
+            sb.append(ConsoleColors.RED_BOLD_BRIGHT + "|\n");
+
+            sb.append((ConsoleColors.YELLOW_BOLD_BRIGHT + "+" + ConsoleColors.RED_BOLD_BRIGHT +
+                    "---").repeat(DIM));
+            sb.append(ConsoleColors.YELLOW_BOLD_BRIGHT + "+\n");
+        }
+        return sb.toString();
     }
 }

@@ -1,5 +1,10 @@
 package go.ui;
 
+import go.model.game.Game;
+import go.model.game.Move;
+import go.model.interfaces.Color;
+import go.model.player.HumanPlayer;
+
 /**
  * This class implements the textual user interface of the Go game.
  * To play the game, run the main method of this class.
@@ -24,9 +29,12 @@ public class GoTUI {
 
     /**
      * Setup function of the TUI.
-     * Creates an empty board and two players according to the input specified by the user.
+     * Creates a new game and two players according to the input specified by the user.
      */
     public void setup() {
-        // TODO document why this method is empty
+        Game game = new Game(new HumanPlayer("p1", Color.BLACK), new HumanPlayer("p2", Color.WHITE));
+        game.doMove(new Move(2, Color.BLACK));
+        game.doMove(new Move(20, Color.WHITE));
+        System.out.println(game.getBoard().toString());
     }
 }

@@ -2,6 +2,7 @@ package go.model.game;
 
 import go.model.interfaces.Color;
 import go.model.interfaces.Player;
+import go.util.exception.IllegalMoveException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,15 +72,16 @@ public class Game {
     /**
      * Does the specified move after checking if it's valid.
      * @param move the move to be done
-     * @return true if the move was executed, false if an error occurred
      */
-    public boolean doMove(Move move) {
+    public void doMove(Move move) {
         if (isValidMove(move)) {
             board.setField(move.getField(), move.getColor());
             this.next = this.next.other();
-            return true;
         } else {
-            return false;
+            if (!isValidMove(move)) {
+            throw new IllegalMoveException(board, move);
+        }
+        board.setField(move.getField(), move.getColor());
         }
     }
 
