@@ -75,22 +75,11 @@ public class Game {
     /**
      * Does the specified move after checking if it's valid.
      * @param move the move to be done
-     * @return true if the move was executed, false if an error occured
+     * @return true if the move was executed, false if an error occurred
      */
     //@ requires isValidMove(move);
     public boolean doMove(Move move) {
         return false;
     }
 
-    /**
-     * This method resets the board, clears the move history and resets the players.
-     * @param p1 the 1st player of the new game
-     * @param p2 the 2nd player of the new game
-     */
-    public void reset(Player p1, Player p2) {
-        board.clear();
-        moves.clear();
-        this.p1 = p1;
-        this.p2 = p2;
-    }
 }
