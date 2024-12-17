@@ -24,7 +24,8 @@ public class Move {
      * Retrieves the tile of with this move.
      * @return the tile as an integer
      */
-    public int getTile() {
+    //@pure
+    public int getField() {
         return this.tile;
     }
 
@@ -59,7 +60,7 @@ public class Move {
      */
     @Override
     public String toString() {
-        return "Move: " + getTile() + " (" + getX() + "," + getY() + ")" + " to " +
+        return "Move: " + getField() + " (" + getX() + "," + getY() + ")" + " to " +
                 this.color.toString();
     }
 }

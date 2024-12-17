@@ -10,11 +10,11 @@ public enum Color {
     BLACK, WHITE, EMPTY;
 
     /**
-     * Returns the opposite color of the current color.
+     * Returns the other color of the current color.
      * If the current color is empty, the method returns empty.
-     * @return the opposite color or empty if the current color is empty
+     * @return the other color or empty if the current color is empty
      */
-    public Color opposite() {
+    public Color other() {
         if (this == BLACK) {
             return WHITE;
         } else if (this == WHITE) {

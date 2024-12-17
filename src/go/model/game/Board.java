@@ -9,15 +9,15 @@ import java.util.List;
  */
 public class Board {
     public static final int DIM = 7;
-    private List<Color> squares;
+    private List<Color> fields;
 
     /**
-     * Creates a board with all empty squares.
+     * Creates a board with all empty fields.
      */
     public Board() {
-        this.squares = new ArrayList<>();
+        this.fields = new ArrayList<>();
         for (int i = 0; i < DIM * DIM; i++) {
-            squares.add(Color.EMPTY);
+            fields.add(Color.EMPTY);
         }
     }
 
@@ -28,6 +28,7 @@ public class Board {
      * @param y the y-coordinate of the tile
      * @return the index of the tile on the board as an integer
      */
+    //@pure
     public int indexOf(int x, int y) {
         return x + y * DIM;
     }
@@ -37,9 +38,10 @@ public class Board {
      *
      * @return a new Board object that is an identical but independent copy of the current board
      */
+    //@pure
     public Board deepCopy() {
         Board copy = new Board();
-        System.arraycopy(this.squares.toArray(), 0, copy.squares.toArray(), 0, this.squares.size());
+        System.arraycopy(this.fields.toArray(), 0, copy.fields.toArray(), 0, this.fields.size());
         return copy;
     }
 
@@ -48,69 +50,86 @@ public class Board {
 
     /**
      * Sets the tile to a color.
-     * @param tile the index of the tile
+     * @param field the index of the tile
      * @param color the color that the tile should be
      */
-    public void setSquare(int tile, Color color) {
-        this.squares.set(tile, color);
+    //@requires isValidField(field);
+    //@ensures fields.get(field) == color;
+    public void setField(int field, Color color) {
+        this.fields.set(field, color);
     }
 
     /**
-     * Sets the tile to empty.
-     * @param tile the index of the tile
+     * Sets a field to empty.
+     * @param field the index of the field
      */
-    public void clearSquare(int tile) {
-        this.squares.set(tile, Color.EMPTY);
+    //@requires isValidField(field);
+    //@ensures fields.get(field) == Color.EMPTY;
+    public void clearField(int field) {
+        this.fields.set(field, Color.EMPTY);
     }
 
     /**
-     * Returns the color of a tile
-     * @param tile the index of the tile
-     * @return the color of the specified tile
+     * Returns the color of a field
+     * @param field the index of the field
+     * @return the color of the specified field
      */
-    public Color getSquare(int tile) {
-        return this.squares.get(tile);
+    //@requires isValidField(field);
+    //@pure
+    public Color getField(int field) {
+        return this.fields.get(field);
     }
 
     /**
-     * Checks if the specified tile is empty.
+     * Checks if the specified field is empty.
      *
-     * @param tile the index of the tile to check
-     * @return true if the tile is empty, false otherwise
+     * @param field the index of the field to check
+     * @return true if the field is empty, false otherwise
      */
-    public Boolean isEmpty(int tile) {
-        return this.squares.get(tile) == Color.EMPTY;
+    //@requires isValidField(field);
+    //@ensures (this.fields.get(field) == Color.EMPTY) <==> \result == true;
+    //@pure
+    public Boolean isEmpty(int field) {
+        return this.fields.get(field) == Color.EMPTY;
     }
 
     /**
-     * Checks if the specified tile index is valid on the board.
+     * Checks whether the given field index is valid within the bounds of the board.
      *
-     * @param tile the index of the tile to check
-     * @return true if the tile index is valid, false otherwise
+     * @param field the index of the field to check
+     * @return true if the field index is valid, false otherwise
      */
-    public Boolean isValidTile(int tile) {
-        return tile >= 0 && tile < DIM * DIM;
+    //@ensures (field >= 0 && field < DIM * DIM) <==> \result == true;
+    //@pure
+    public Boolean isValidField(int field) {
+        return field >= 0 && field < DIM * DIM;
     }
+
 
     //Neighbor methods
 
     /**
-     * Retrieves the list of neighboring tiles for the specified tile index.
+     * Retrieves the neighboring fields of the specified field on the board.
      *
-     * @param tile the index of the tile whose neighbors are to be retrieved
-     * @return a list of integers representing the indices of neighboring tiles
+     * @param field the index of the field for which neighbors are to be retrieved
+     * @return a list of integers representing the indices of the neighboring fields
      */
-    public List<Integer> getNeighbors(int tile) {
+    //@requires isValidField(field);
+    //@pure
+    public List<Integer> getNeighbors(int field) {
         return new ArrayList<>();
     }
 
     /**
-     * Checks if the specified tile has no empty neighbors on the board.
+     * Checks if the specified field has no empty neighboring fields.
      *
-     * @param tile the index of the tile to check
-     * @return true if none of the neighboring tiles are empty, false otherwise
+     * @param field the index of the field to check
+     * @return true if none of the neighboring fields are empty, false otherwise
      */
-    public Boolean noEmptyNeighbors(int tile) {
+    //@requires isValidField(field);
+    //@ensures \result == true <==> (\forall int i; getNeighbors(field).contains(i); getField(i) != Color.EMPTY);
+    //@pure
+    public Boolean noEmptyNeighbors(int field) {
         return false;
     }
 
@@ -123,29 +142,37 @@ public class Board {
      * @param move the move to evaluate for capturing
      * @return true if the move results in a capture, false otherwise
      */
+    //@requires isValidField(move.getField());
+    //@pure
     public Boolean captures(Move move) {
         return false;
     }
 
+
     //Group methods
 
     /**
-     * Retrieves a group of connected tiles starting from the given tile.
-     * A group consists of tiles of the same color that are directly connected.
+     * Returns a List of connected fields starting from the specified field.
      *
-     * @param tile the starting tile index
-     * @return a list of integers representing the indices of the tiles in the group
+     * @param field the starting field index
+     * @return a list of integers representing the connected group
      */
-    public List<Integer> getGroup(int tile) {
+    //@requires isValidField(field);
+    //@ensures (\forall int f; \result.contains(f); isValidField(f));
+    //@pure
+    public List<Integer> getGroup(int field) {
         return new ArrayList<>();
     }
 
     /**
-     * Checks whether the given group of tiles is completely surrounded by tiles of other colors.
+     * Checks whether the given group of fields is completely surrounded by fields of other colors.
      *
-     * @param group a list of integers representing the indices of the tiles in the group
+     * @param group a list of integers representing the indices of the fields in the group
      * @return true if the group is completely surrounded, false otherwise
      */
+    //@requires (\forall int field; group.contains(field); isValidField(field));
+    //@ensures (\forall int field; group.contains(field); noEmptyNeighbors(field)) <==> \result == true;
+    //@pure
     public Boolean isGroupSurrounded(List<Integer> group) {
         return false;
     }
