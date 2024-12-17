@@ -8,7 +8,7 @@ import java.util.List;
  * Represents the board of a game of Go with a predetermined dimension.
  */
 public class Board {
-    public static final int DIM = 7;
+    public static final int DIM = 9;
     private List<Color> fields;
 
     /**
@@ -31,6 +31,14 @@ public class Board {
     //@pure
     public int indexOf(int x, int y) {
         return x + y * DIM;
+    }
+
+    public int xOf(int field) {
+        return field % DIM;
+    }
+
+    public int yOf(int field) {
+        return field / DIM;
     }
 
     /**
@@ -57,16 +65,6 @@ public class Board {
     //@ensures fields.get(field) == color;
     public void setField(int field, Color color) {
         this.fields.set(field, color);
-    }
-
-    /**
-     * Sets a field to empty.
-     * @param field the index of the field
-     */
-    //@requires isValidField(field);
-    //@ensures fields.get(field) == Color.EMPTY;
-    public void clearField(int field) {
-        this.fields.set(field, Color.EMPTY);
     }
 
     /**
@@ -115,9 +113,25 @@ public class Board {
      * @return a list of integers representing the indices of the neighboring fields
      */
     //@requires isValidField(field);
+    //@ensures (\forall int i; \result.contains(i); isValidField(i));
     //@pure
     public List<Integer> getNeighbors(int field) {
-        return new ArrayList<>();
+        int x = xOf(field);
+        int y = yOf(field);
+        List<Integer> neighbors = new ArrayList<>();
+        if( x > 0 ) {
+            neighbors.add(indexOf(x - 1, y));
+        }
+        if( x < DIM - 1 ) {
+            neighbors.add(indexOf(x + 1, y));
+        }
+        if( y > 0 ) {
+            neighbors.add(indexOf(x, y - 1));
+        }
+        if( y < DIM - 1 ) {
+            neighbors.add(indexOf(x, y + 1));
+        }
+        return neighbors;
     }
 
     /**
@@ -129,23 +143,13 @@ public class Board {
     //@requires isValidField(field);
     //@ensures \result == true <==> (\forall int i; getNeighbors(field).contains(i); getField(i) != Color.EMPTY);
     //@pure
-    public Boolean noEmptyNeighbors(int field) {
-        return false;
-    }
-
-
-    //Move methods
-
-    /**
-     * Determines whether the given move captures any opponent's pieces.
-     *
-     * @param move the move to evaluate for capturing
-     * @return true if the move results in a capture, false otherwise
-     */
-    //@requires isValidField(move.getField());
-    //@pure
-    public Boolean captures(Move move) {
-        return false;
+    public Boolean hasEmptyNeighbors(int field) {
+        for( int i : getNeighbors(field)) {
+            if( getField(i) == Color.EMPTY ) {
+                return false;
+            }
+        }
+        return true;
     }
 
 
@@ -158,10 +162,28 @@ public class Board {
      * @return a list of integers representing the connected group
      */
     //@requires isValidField(field);
+    //@requires getField(field) != Color.EMPTY;
     //@ensures (\forall int f; \result.contains(f); isValidField(f));
     //@pure
     public List<Integer> getGroup(int field) {
-        return new ArrayList<>();
+        List<Integer> group = new ArrayList<>();
+        group.add(field);
+
+        for( int i : group) {
+            for (int j : getNeighbors(i)) {
+                if (group.contains(j)) {
+                    continue;
+                }
+                if (!isValidField(j)) {
+                    continue;
+                }
+                if (getField(j) != getField(field)) {
+                    continue;
+                }
+                group.add(j);
+            }
+        }
+        return group;
     }
 
     /**
@@ -171,9 +193,14 @@ public class Board {
      * @return true if the group is completely surrounded, false otherwise
      */
     //@requires (\forall int field; group.contains(field); isValidField(field));
-    //@ensures (\forall int field; group.contains(field); noEmptyNeighbors(field)) <==> \result == true;
+    //@ensures (\forall int field; group.contains(field); hasEmptyNeighbors(field)) <==> \result == true;
     //@pure
     public Boolean isGroupSurrounded(List<Integer> group) {
-        return false;
+        for( int i : group ) {
+            if( hasEmptyNeighbors(i) ) {
+                return false;
+            }
+        }
+        return true;
     }
 }

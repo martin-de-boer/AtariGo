@@ -82,4 +82,17 @@ public class Game {
         return false;
     }
 
+
+    /**
+     * Determines whether the given move captures any opponent's pieces.
+     *
+     * @param move the move to evaluate for capturing
+     * @return true if the move results in a capture, false otherwise
+     */
+    //@requires board.isValidField(move.getField());
+    //@pure
+    public Boolean captures(Move move) {
+        return false;
+    }
+
 }
