@@ -1,5 +1,6 @@
 package go.model.game;
 
+import go.model.interfaces.Color;
 import go.model.interfaces.Player;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +12,8 @@ public class Game {
     private Player p1;
     private Player p2;
     private Board board;
-    private List<Move> moves;
+    private Color next;
+
 
     /**
      * Creates a game with an empty board.
@@ -20,7 +22,7 @@ public class Game {
         this.p1 = p1;
         this.p2 = p2;
         this.board = new Board();
-        this.moves = new ArrayList<>();
+        this.next = Color.BLACK;
     }
 
     /**
@@ -31,28 +33,13 @@ public class Game {
         return this.board;
     }
 
-    /**
-     * Returns a list of all the past moves of this game.
-     * @return all past moves of this game.
-     */
-    public List<Move> getMoves() {
-        return this.moves;
-    }
 
     /**
      * Returns the player whose turn it is.
      * @return the player whose turn it is
      */
     public Player getTurn() {
-        return null;
-    }
-
-    /**
-     * Returns the winner of this game, or null if it has no winner.
-     * @return the winner of the game, null if it has no winner
-     */
-    public Player getWinner() {
-        return null;
+        return this.next == Color.BLACK ? p1 : p2;
     }
 
     /**
@@ -61,7 +48,7 @@ public class Game {
      */
     //@ pure;
     public boolean isValidMove(Move move) {
-        return false;
+        return move.getColor() == this.next && board.isValidField(move.getField()) && board.isEmpty(move.getField());
     }
 
     /**
@@ -69,7 +56,16 @@ public class Game {
      * @return all legal moves in the current position.
      */
     public List<Move> getValidMoves() {
-        return null;
+        int dim = board.DIM;
+        List<Move> moves = new ArrayList<>();
+
+        for (int i = 0; i < dim; i++) {
+            Move move = new Move(i, next);
+            if (isValidMove(move)) {
+                moves.add(move);
+            }
+        }
+        return moves;
     }
 
     /**
@@ -77,22 +73,31 @@ public class Game {
      * @param move the move to be done
      * @return true if the move was executed, false if an error occurred
      */
-    //@ requires isValidMove(move);
     public boolean doMove(Move move) {
-        return false;
+        if (isValidMove(move)) {
+            board.setField(move.getField(), move.getColor());
+            this.next = this.next.other();
+            return true;
+        } else {
+            return false;
+        }
     }
 
 
     /**
-     * Determines whether the given move captures any opponent's pieces.
+     * Checks if the game is over based on the last move.
      *
-     * @param move the move to evaluate for capturing
-     * @return true if the move results in a capture, false otherwise
+     * @param move the move to check for game-over conditions
+     * @return true if all groups in the neighborhood of the move are surrounded, false otherwise
      */
     //@requires board.isValidField(move.getField());
     //@pure
-    public Boolean captures(Move move) {
-        return false;
+    public Boolean isGameOver(Move move) {
+        for (int i : board.getNeighbors(move.getField())) {
+            if (! board.isGroupSurrounded(board.getGroup(i))) {
+                return false;
+            }
+        }
+        return true;
     }
-
 }

@@ -1,5 +1,6 @@
 package go.model.interfaces;
 
+import go.model.game.Game;
 import go.model.game.Move;
 
 /**
@@ -15,6 +16,6 @@ public interface Player {
     /**
      * Determines the next move. Implementation varies with different types of players.
      */
-    Move determineMove();
+    Move determineMove(Game game);
 
 }

@@ -1,8 +1,10 @@
 package go.model.player;
 
+import go.model.game.Game;
 import go.model.game.Move;
 import go.model.interfaces.Color;
 import go.model.interfaces.Player;
+import java.util.Scanner;
 
 /**
  * This class is used to define a human player. It will use the System input to determine moves.
@@ -16,8 +18,10 @@ public class HumanPlayer implements Player {
         this.color = color;
     }
 
+
     /**
      * Returns the name of the player.
+     *
      * @return the name of the player
      */
     @Override
@@ -30,7 +34,23 @@ public class HumanPlayer implements Player {
      * @return the next move according to the player.
      */
     @Override
-    public Move determineMove() {
-        return null;
+    public Move determineMove(Game game) {
+        Boolean valid = false;
+        Move move = null;
+        System.out.println( name + " Make a move: " );
+        while (!valid) {
+            Scanner input = new Scanner(System.in);
+
+            int i = input.nextInt();
+            move = new Move(i, color);
+
+            if (game.isValidMove(move)) {
+                valid = true;
+            }
+            else {
+                System.out.print("Try again! ");
+            }
+        }
+        return move;
     }
 }
