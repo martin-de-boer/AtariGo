@@ -1,0 +1,22 @@
+package go.ai.interfaces;
+
+import go.model.Move;
+
+/**
+ * This interface defines the basic methods a strategy needs.
+ * The computer player will use a strategy in order to determine its next move
+ */
+public interface Strategy {
+    /**
+     * Method to determine the next move according to the strategy.
+     * @return the next move that the strategy suggests
+     */
+    Move determineMove();
+
+    /**
+     * Method to get the name of the strategy.
+     * @return the name of the strategy
+     */
+    @Override
+    String toString();
+}
