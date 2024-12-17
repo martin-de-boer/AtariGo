@@ -1,6 +1,6 @@
 package go.model.interfaces;
 
-import go.model.Move;
+import go.model.game.Move;
 
 /**
  * This interface is used to define methods for various types of players of the Go game.

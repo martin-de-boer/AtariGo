@@ -1,6 +1,6 @@
 package go.model.player;
 
-import go.model.Move;
+import go.model.game.Move;
 import go.model.interfaces.Color;
 import go.model.interfaces.Player;
 

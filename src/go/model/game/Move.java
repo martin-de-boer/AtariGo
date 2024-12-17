@@ -1,4 +1,4 @@
-package go.model;
+package go.model.game;
 
 import go.model.interfaces.Color;
 
@@ -8,6 +8,7 @@ import go.model.interfaces.Color;
 public class Move {
     private final int tile;
     private final Color color;
+
 
     /**
      * Constructs a new Move object with the specified tile position and color.

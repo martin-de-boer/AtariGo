@@ -1,7 +1,7 @@
 package go.ai.strategy;
 
 import go.ai.interfaces.Strategy;
-import go.model.Move;
+import go.model.game.Move;
 
 /**
  * Naive strategy that picks an arbitrary (random move) to play.

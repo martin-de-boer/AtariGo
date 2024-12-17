@@ -1,6 +1,6 @@
 package go.ai.interfaces;
 
-import go.model.Move;
+import go.model.game.Move;
 
 /**
  * This interface defines the basic methods a strategy needs.

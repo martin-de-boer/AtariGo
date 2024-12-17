@@ -1,7 +1,7 @@
 package go.model.player;
 
 import go.ai.interfaces.Strategy;
-import go.model.Move;
+import go.model.game.Move;
 import go.model.interfaces.Color;
 import go.model.interfaces.Player;
 
