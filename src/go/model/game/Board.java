@@ -9,7 +9,7 @@ import java.util.List;
  * Represents the board of a game of Go with a predetermined dimension.
  */
 public class Board {
-    public static final int DIM = 9;
+    public static final int DIM = 7;
     private List<Color> fields;
 
     /**
@@ -206,18 +206,6 @@ public class Board {
     }
 
     /**
-     * Creates a deep copy of the current board.
-     * @return a new board instance with identical square values as the original board
-     */
-    public Board deepCopy() {
-        Board copy = new Board();
-        for (int i = 0; i < DIM * DIM; i++) {
-            copy.squares.set(i, this.squares.get(i));
-        }
-        return copy;
-    }
-
-    /**
      * Generates a string representation of the current board.
      * Hardcoded to DIM = 7.
      * @return a string representing the board
@@ -233,7 +221,7 @@ public class Board {
         for (int i = 0; i < DIM; i++) {
             for (int j = 0; j < DIM; j++) {
                 sb.append(ConsoleColors.RED_BOLD_BRIGHT + "|" + ConsoleColors.RESET);
-                switch (this.squares.get(i * DIM + j)) {
+                switch (this.fields.get(i * DIM + j)) {
                     case BLACK -> sb.append(ConsoleColors.PURPLE_BOLD_BRIGHT + " O ");
                     case WHITE -> sb.append(ConsoleColors.WHITE_BOLD_BRIGHT + " O ");
                     case EMPTY -> {
