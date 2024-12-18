@@ -105,10 +105,10 @@ public class Game {
     //@pure
     public Boolean isGameOver(Move move) {
         for (int i : board.getNeighbors(move.getField())) {
-            if (! board.isGroupSurrounded(board.getGroup(i))) {
-                return false;
+            if (board.isGroupSurrounded(board.getGroup(i))) {
+                return true;
             }
         }
-        return true;
+        return false;
     }
 }

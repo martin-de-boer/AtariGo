@@ -20,6 +20,15 @@ public class HumanPlayer implements Player {
         this.color = color;
     }
 
+    /**
+     * Retrieves the color associated with the player.
+     *
+     * @return the color of the player
+     */
+    //@pure
+    public Color getColor() {
+        return color;
+    }
 
     /**
      * Returns the name of the player.

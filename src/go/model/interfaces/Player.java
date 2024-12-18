@@ -13,6 +13,8 @@ public interface Player {
      */
     String getName();
 
+    Color getColor();
+
     /**
      * Determines the next move. Implementation varies with different types of players.
      */

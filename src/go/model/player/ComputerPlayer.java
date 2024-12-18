@@ -19,6 +19,16 @@ public class ComputerPlayer implements Player {
     }
 
     /**
+     * Retrieves the color associated with the player.
+     *
+     * @return the color of the player
+     */
+    //@pure
+    public Color getColor() {
+        return color;
+    }
+
+    /**
      * Returns the name of the player.
      * Format: [strategy]-[color]
      * @return the name of the player
