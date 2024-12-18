@@ -34,10 +34,12 @@ public class Board {
         return x + y * DIM;
     }
 
+    //@pure
     public int xOf(int field) {
         return field % DIM;
     }
 
+    //@pure
     public int yOf(int field) {
         return field / DIM;
     }
