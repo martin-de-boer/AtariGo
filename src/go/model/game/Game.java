@@ -26,6 +26,14 @@ public class Game {
         this.next = Color.BLACK;
     }
 
+    public Player getP2() {
+        return p2;
+    }
+
+    public Player getP1() {
+        return p1;
+    }
+
     /**
      * Returns the board attached to the game.
      * @return the board of the game
@@ -49,12 +57,18 @@ public class Game {
      */
     //@ pure;
     public boolean isValidMove(Move move) {
-        Board newBoard = board.deepCopy();
-        newBoard.setField(move.getField(), move.getColor());
-        if (newBoard.isGroupSurrounded(newBoard.getGroup(move.getField()))) {
+
+        if(!board.isValidField(move.getField())) {
             return false;
         }
-        return move.getColor() == this.next && board.isValidField(move.getField()) && board.isEmpty(move.getField());
+        if (move.getColor() != this.next || ! (board.isEmpty(move.getField()))) {
+            return false;
+        }
+
+        Board newBoard = board.deepCopy();
+        newBoard.setField(move.getField(), move.getColor());
+
+        return !newBoard.isGroupSurrounded(newBoard.getGroup(move.getField()));
     }
 
     /**

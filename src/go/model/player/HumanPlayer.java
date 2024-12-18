@@ -56,8 +56,8 @@ public class HumanPlayer implements Player {
             String[] split = in.split("\\s+");
 
             try {
-                x = Integer.parseInt(split[0]);
-                y = Integer.parseInt(split[1]);
+                y = Integer.parseInt(split[0]);
+                x = Integer.parseInt(split[1]);
             } catch (Exception e) {
                 System.out.println("The arguments provided are not valid coordinates or not enough arguments!");
                 continue;

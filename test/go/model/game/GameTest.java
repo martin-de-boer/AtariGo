@@ -31,6 +31,12 @@ public class GameTest {
         Move validMove = new Move(5, Color.BLACK);
         assertTrue(game.isValidMove(validMove));
 
+        Move wrongIndexMove1 = new Move(-1, Color.WHITE);
+        assertFalse(game.isValidMove(wrongIndexMove1));
+
+        Move wrongIndexMove2 = new Move(100, Color.WHITE);
+        assertFalse(game.isValidMove(wrongIndexMove2));
+
         Move wrongColorMove = new Move(5, Color.WHITE);
         assertFalse(game.isValidMove(wrongColorMove));
 

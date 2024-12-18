@@ -19,6 +19,10 @@ public class SmartStrategy implements Strategy {
 
         double random = Math.random();
 
+        if (moves.isEmpty()) {
+            return null;
+        }
+
         double floor = Math.floor(random * (moves.size() - 0.01));
         return moves.get((int) floor);
     }
