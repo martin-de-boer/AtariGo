@@ -1,5 +1,6 @@
 package go.model.player;
 
+import go.model.game.Game;
 import go.model.game.Move;
 import go.model.interfaces.Color;
 import go.model.interfaces.Player;
@@ -16,8 +17,10 @@ public class HumanPlayer implements Player {
         this.color = color;
     }
 
+
     /**
      * Returns the name of the player.
+     *
      * @return the name of the player
      */
     @Override
@@ -30,7 +33,7 @@ public class HumanPlayer implements Player {
      * @return the next move according to the player.
      */
     @Override
-    public Move determineMove() {
+    public Move determineMove(Game game) {
         return null;
     }
 }

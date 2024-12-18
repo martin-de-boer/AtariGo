@@ -13,7 +13,8 @@ public class Game {
     private Player p1;
     private Player p2;
     private Board board;
-    private List<Move> moves;
+    private Color next;
+
 
     /**
      * Creates a game with an empty board.
@@ -22,7 +23,7 @@ public class Game {
         this.p1 = p1;
         this.p2 = p2;
         this.board = new Board();
-        this.moves = new ArrayList<>();
+        this.next = Color.BLACK;
     }
 
     /**
@@ -33,28 +34,13 @@ public class Game {
         return this.board;
     }
 
-    /**
-     * Returns a list of all the past moves of this game.
-     * @return all past moves of this game.
-     */
-    public List<Move> getMoves() {
-        return this.moves;
-    }
 
     /**
      * Returns the player whose turn it is.
      * @return the player whose turn it is
      */
     public Player getTurn() {
-        return null;
-    }
-
-    /**
-     * Returns the winner of this game, or null if it has no winner.
-     * @return the winner of the game, null if it has no winner
-     */
-    public Player getWinner() {
-        return null;
+        return this.next == Color.BLACK ? p1 : p2;
     }
 
     /**
@@ -63,7 +49,7 @@ public class Game {
      */
     //@ pure;
     public boolean isValidMove(Move move) {
-        return board.getSquare(move.getTile()) == Color.EMPTY;
+        return move.getColor() == this.next && board.isValidField(move.getField()) && board.isEmpty(move.getField());
     }
 
     /**
@@ -71,30 +57,49 @@ public class Game {
      * @return all legal moves in the current position.
      */
     public List<Move> getValidMoves() {
-        return null;
+        int dim = board.DIM;
+        List<Move> moves = new ArrayList<>();
+
+        for (int i = 0; i < dim; i++) {
+            Move move = new Move(i, next);
+            if (isValidMove(move)) {
+                moves.add(move);
+            }
+        }
+        return moves;
     }
 
     /**
      * Does the specified move after checking if it's valid.
      * @param move the move to be done
      */
-    //@ requires isValidMove(move);
     public void doMove(Move move) {
-        if (!isValidMove(move)) {
+        if (isValidMove(move)) {
+            board.setField(move.getField(), move.getColor());
+            this.next = this.next.other();
+        } else {
+            if (!isValidMove(move)) {
             throw new IllegalMoveException(board, move);
         }
-        board.setSquare(move.getTile(), move.getColor());
+        board.setField(move.getField(), move.getColor());
+        }
     }
 
+
     /**
-     * This method resets the board, clears the move history and resets the players.
-     * @param p1 the 1st player of the new game
-     * @param p2 the 2nd player of the new game
+     * Checks if the game is over based on the last move.
+     *
+     * @param move the move to check for game-over conditions
+     * @return true if all groups in the neighborhood of the move are surrounded, false otherwise
      */
-    public void reset(Player p1, Player p2) {
-        board.clear();
-        moves.clear();
-        this.p1 = p1;
-        this.p2 = p2;
+    //@requires board.isValidField(move.getField());
+    //@pure
+    public Boolean isGameOver(Move move) {
+        for (int i : board.getNeighbors(move.getField())) {
+            if (! board.isGroupSurrounded(board.getGroup(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 }

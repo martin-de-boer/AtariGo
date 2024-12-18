@@ -1,6 +1,7 @@
 package go.model.player;
 
 import go.ai.interfaces.Strategy;
+import go.model.game.Game;
 import go.model.game.Move;
 import go.model.interfaces.Color;
 import go.model.interfaces.Player;
@@ -32,7 +33,7 @@ public class ComputerPlayer implements Player {
      * @return the next move according to the strategy.
      */
     @Override
-    public Move determineMove() {
-        return strategy.determineMove();
+    public Move determineMove(Game game) {
+        return strategy.determineMove(game);
     }
 }

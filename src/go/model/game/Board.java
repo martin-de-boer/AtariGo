@@ -9,93 +9,200 @@ import java.util.List;
  * Represents the board of a game of Go with a predetermined dimension.
  */
 public class Board {
-    public static final int DIM = 19;
-    private List<Color> squares;
+    public static final int DIM = 7;
+    private List<Color> fields;
 
     /**
      * Creates a board with all empty squares.
      */
     public Board() {
-        this.squares = new ArrayList<>();
+        this.fields = new ArrayList<>();
         for (int i = 0; i < DIM * DIM; i++) {
-            squares.add(Color.EMPTY);
+            fields.add(Color.EMPTY);
         }
     }
+
+    /**
+     * Calculates the index of a tile on the board based on the given x and y coordinates.
+     *
+     * @param x the x-coordinate of the tile
+     * @param y the y-coordinate of the tile
+     * @return the index of the tile on the board as an integer
+     */
+    //@pure
+    public int indexOf(int x, int y) {
+        return x + y * DIM;
+    }
+
+    public int xOf(int field) {
+        return field % DIM;
+    }
+
+    public int yOf(int field) {
+        return field / DIM;
+    }
+
+    /**
+     * Creates and returns a deep copy of the current board.
+     *
+     * @return a new Board object that is an identical but independent copy of the current board
+     */
+    //@pure
+    public Board deepCopy() {
+        Board copy = new Board();
+        System.arraycopy(this.fields.toArray(), 0, copy.fields.toArray(), 0, this.fields.size());
+        return copy;
+    }
+
+
+    //Tile methods
 
     /**
      * Sets the tile to a color.
-     * @param tile the index of the tile
+     * @param field the index of the tile
      * @param color the color that the tile should be
      */
-    public void setSquare(int tile, Color color) {
-        this.squares.set(tile, color);
+    //@requires isValidField(field);
+    //@ensures fields.get(field) == color;
+    public void setField(int field, Color color) {
+        this.fields.set(field, color);
     }
 
     /**
-     * Sets the tile at (x,y) to a color.
-     * @param x the x index of the tile
-     * @param y the y index of the tile
-     * @param color the color that the tile should be
+     * Returns the color of a field
+     * @param field the index of the field
+     * @return the color of the specified field
      */
-    public void setSquare(int x, int y, Color color) {
-        this.squares.set(x + y * DIM, color);
+    //@requires isValidField(field);
+    //@pure
+    public Color getField(int field) {
+        return this.fields.get(field);
     }
 
     /**
-     * Sets the tile to empty.
-     * @param tile the index of the tile
+     * Checks if the specified field is empty.
+     *
+     * @param field the index of the field to check
+     * @return true if the field is empty, false otherwise
      */
-    public void clearSquare(int tile) {
-        this.squares.set(tile, Color.EMPTY);
+    //@requires isValidField(field);
+    //@ensures (this.fields.get(field) == Color.EMPTY) <==> \result == true;
+    //@pure
+    public Boolean isEmpty(int field) {
+        return this.fields.get(field) == Color.EMPTY;
     }
 
     /**
-     * Sets the tile at (x,y) to empty.
-     * @param x the x index of the tile
-     * @param y the y index of the tile
+     * Checks whether the given field index is valid within the bounds of the board.
+     *
+     * @param field the index of the field to check
+     * @return true if the field index is valid, false otherwise
      */
-    public void clearSquare(int x, int y) {
-        this.squares.set(x + y * DIM, Color.EMPTY);
+    //@ensures (field >= 0 && field < DIM * DIM) <==> \result == true;
+    //@pure
+    public Boolean isValidField(int field) {
+        return field >= 0 && field < DIM * DIM;
     }
 
-    /**
-     * Returns the color of a tile
-     * @param tile the index of the tile
-     * @return the color of the specified tile
-     */
-    public Color getSquare(int tile) {
-        return this.squares.get(tile);
-    }
+
+    //Neighbor methods
 
     /**
-     * Returns the color of the tile at (x,y)
-     * @param x the x index of the tile
-     * @param y the y index of the tile
-     * @return the color of the specified tile
+     * Retrieves the neighboring fields of the specified field on the board.
+     *
+     * @param field the index of the field for which neighbors are to be retrieved
+     * @return a list of integers representing the indices of the neighboring fields
      */
-    public Color getSquare(int x, int y) {
-        return this.squares.get(x + y * DIM);
-    }
-
-    /**
-     * Sets all the tiles to empty.
-     */
-    public void clear() {
-        for (int i = 0; i < DIM * DIM; i++) {
-            squares.set(i, Color.EMPTY);
+    //@requires isValidField(field);
+    //@ensures (\forall int i; \result.contains(i); isValidField(i));
+    //@pure
+    public List<Integer> getNeighbors(int field) {
+        int x = xOf(field);
+        int y = yOf(field);
+        List<Integer> neighbors = new ArrayList<>();
+        if( x > 0 ) {
+            neighbors.add(indexOf(x - 1, y));
         }
+        if( x < DIM - 1 ) {
+            neighbors.add(indexOf(x + 1, y));
+        }
+        if( y > 0 ) {
+            neighbors.add(indexOf(x, y - 1));
+        }
+        if( y < DIM - 1 ) {
+            neighbors.add(indexOf(x, y + 1));
+        }
+        return neighbors;
     }
 
     /**
-     * Creates a deep copy of the current board.
-     * @return a new board instance with identical square values as the original board
+     * Checks if the specified field has no empty neighboring fields.
+     *
+     * @param field the index of the field to check
+     * @return true if none of the neighboring fields are empty, false otherwise
      */
-    public Board deepCopy() {
-        Board copy = new Board();
-        for (int i = 0; i < DIM * DIM; i++) {
-            copy.squares.set(i, this.squares.get(i));
+    //@requires isValidField(field);
+    //@ensures \result == true <==> (\forall int i; getNeighbors(field).contains(i); getField(i) != Color.EMPTY);
+    //@pure
+    public Boolean hasEmptyNeighbors(int field) {
+        for( int i : getNeighbors(field)) {
+            if( getField(i) == Color.EMPTY ) {
+                return false;
+            }
         }
-        return copy;
+        return true;
+    }
+
+
+    //Group methods
+
+    /**
+     * Returns a List of connected fields starting from the specified field.
+     *
+     * @param field the starting field index
+     * @return a list of integers representing the connected group
+     */
+    //@requires isValidField(field);
+    //@requires getField(field) != Color.EMPTY;
+    //@ensures (\forall int f; \result.contains(f); isValidField(f));
+    //@pure
+    public List<Integer> getGroup(int field) {
+        List<Integer> group = new ArrayList<>();
+        group.add(field);
+
+        for( int i : group) {
+            for (int j : getNeighbors(i)) {
+                if (group.contains(j)) {
+                    continue;
+                }
+                if (!isValidField(j)) {
+                    continue;
+                }
+                if (getField(j) != getField(field)) {
+                    continue;
+                }
+                group.add(j);
+            }
+        }
+        return group;
+    }
+
+    /**
+     * Checks whether the given group of fields is completely surrounded by fields of other colors.
+     *
+     * @param group a list of integers representing the indices of the fields in the group
+     * @return true if the group is completely surrounded, false otherwise
+     */
+    //@requires (\forall int field; group.contains(field); isValidField(field));
+    //@ensures (\forall int field; group.contains(field); hasEmptyNeighbors(field)) <==> \result == true;
+    //@pure
+    public Boolean isGroupSurrounded(List<Integer> group) {
+        for( int i : group ) {
+            if( hasEmptyNeighbors(i) ) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -115,7 +222,7 @@ public class Board {
         for (int i = 0; i < DIM; i++) {
             for (int j = 0; j < DIM; j++) {
                 sb.append(ConsoleColors.RED_BOLD_BRIGHT + "|" + ConsoleColors.RESET);
-                switch (this.squares.get(i * DIM + j)) {
+                switch (this.fields.get(i * DIM + j)) {
                     case BLACK -> sb.append(ConsoleColors.PURPLE_BOLD_BRIGHT + " O ");
                     case WHITE -> sb.append(ConsoleColors.WHITE_BOLD_BRIGHT + " O ");
                     case EMPTY -> {

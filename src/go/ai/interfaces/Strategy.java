@@ -1,5 +1,6 @@
 package go.ai.interfaces;
 
+import go.model.game.Game;
 import go.model.game.Move;
 
 /**
@@ -11,7 +12,7 @@ public interface Strategy {
      * Method to determine the next move according to the strategy.
      * @return the next move that the strategy suggests
      */
-    Move determineMove();
+    Move determineMove(Game game);
 
     /**
      * Method to get the name of the strategy.
