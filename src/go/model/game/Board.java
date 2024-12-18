@@ -9,7 +9,7 @@ import java.util.List;
  * Represents the board of a game of Go with a predetermined dimension.
  */
 public class Board {
-    public static final int DIM = 7;
+    public static final int DIM = 19;
     private List<Color> squares;
 
     /**
@@ -100,17 +100,18 @@ public class Board {
 
     /**
      * Generates a string representation of the current board.
-     * Hardcoded to DIM = 7.
+     * Also works with different DIM values.
      * @return a string representing the board
      */
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Board:\n");
 
+        // First line:
         sb.append((ConsoleColors.YELLOW_BOLD_BRIGHT + "+" + ConsoleColors.RED_BOLD_BRIGHT +
                 "---").repeat(DIM));
         sb.append(ConsoleColors.YELLOW_BOLD_BRIGHT + "+\n");
 
+        // Now recursively print the rest:
         for (int i = 0; i < DIM; i++) {
             for (int j = 0; j < DIM; j++) {
                 sb.append(ConsoleColors.RED_BOLD_BRIGHT + "|" + ConsoleColors.RESET);
@@ -118,8 +119,9 @@ public class Board {
                     case BLACK -> sb.append(ConsoleColors.PURPLE_BOLD_BRIGHT + " O ");
                     case WHITE -> sb.append(ConsoleColors.WHITE_BOLD_BRIGHT + " O ");
                     case EMPTY -> {
-                        if (i == 0) sb.append(ConsoleColors.WHITE + " " + j + " ");
-                        else if (j == 0) sb.append(ConsoleColors.WHITE + " " + i + " ");
+                        // Print numbers in empty cells on the edges:
+                        if (i == 0) sb.append(ConsoleColors.WHITE + " " + (j % 10) + " ");
+                        else if (j == 0) sb.append(ConsoleColors.WHITE + " " + (i % 10) + " ");
                         else sb.append("   ");
                     }
                 }
