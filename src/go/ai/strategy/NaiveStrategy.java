@@ -1,7 +1,9 @@
 package go.ai.strategy;
 
 import go.ai.interfaces.Strategy;
+import go.model.game.Game;
 import go.model.game.Move;
+import java.util.List;
 
 /**
  * Naive strategy that picks an arbitrary (random move) to play.
@@ -12,8 +14,13 @@ public class NaiveStrategy implements Strategy {
      * @return a random legal move
      */
     @Override
-    public Move determineMove() {
-        return null;
+    public Move determineMove(Game game) {
+        List<Move> moves = game.getValidMoves();
+
+        double random = Math.random();
+
+        double floor = Math.floor(random * (moves.size() - 0.01));
+        return moves.get((int) floor);
     }
 
     /**

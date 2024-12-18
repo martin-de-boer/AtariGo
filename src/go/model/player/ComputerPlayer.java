@@ -34,6 +34,6 @@ public class ComputerPlayer implements Player {
      */
     @Override
     public Move determineMove(Game game) {
-        return strategy.determineMove();
+        return strategy.determineMove(game);
     }
 }
