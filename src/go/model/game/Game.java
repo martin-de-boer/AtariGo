@@ -73,17 +73,26 @@ public class Game {
      * Does the specified move after checking if it's valid.
      * @param move the move to be done
      */
-    public void doMove(Move move) {
+    //@requires isValidMove(move);
+    public boolean doMove(Move move) {
         if (isValidMove(move)) {
             board.setField(move.getField(), move.getColor());
             this.next = this.next.other();
+
         } else {
             if (!isValidMove(move)) {
-            throw new IllegalMoveException(board, move);
+                throw new IllegalMoveException(board, move);
+            }
+            board.setField(move.getField(), move.getColor());
         }
-        board.setField(move.getField(), move.getColor());
+        if (isGameOver(move)) {
+            return true;
+        } else {
+            return false;
         }
     }
+
+
 
 
     /**
