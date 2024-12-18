@@ -69,8 +69,12 @@ public class Game {
     }
 
     /**
-     * Does the specified move after checking if it's valid.
-     * @param move the move to be done
+     * Executes the specified move if it is valid, updates the game state,
+     * and checks if the game is over after the move.
+     *
+     * @param move the move to be executed
+     * @return true if the game is over after the move, false otherwise
+     * @throws IllegalMoveException if the move is invalid
      */
     //@requires isValidMove(move);
     public boolean doMove(Move move) {
@@ -90,9 +94,6 @@ public class Game {
             return false;
         }
     }
-
-
-
 
     /**
      * Checks if the game is over based on the last move.

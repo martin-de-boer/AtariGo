@@ -31,17 +31,17 @@ public class Board {
      */
     //@pure
     public int indexOf(int x, int y) {
-        return x + y * DIM;
+        return x * DIM + y;
     }
 
     //@pure
-    public int xOf(int field) {
-        return field % DIM;
-    }
-
-    //@pure
-    public int yOf(int field) {
+    public int iOf(int field) {
         return field / DIM;
+    }
+
+    //@pure
+    public int jOf(int field) {
+       return field % DIM;
     }
 
     /**
@@ -52,7 +52,9 @@ public class Board {
     //@pure
     public Board deepCopy() {
         Board copy = new Board();
-        System.arraycopy(this.fields.toArray(), 0, copy.fields.toArray(), 0, this.fields.size());
+        for (int i = 0; i < DIM * DIM; i++) {
+            copy.fields.set(i, this.fields.get(i));
+        }
         return copy;
     }
 
@@ -132,8 +134,8 @@ public class Board {
     //@ensures (\forall int i; \result.contains(i); isValidField(i));
     //@pure
     public List<Integer> getNeighbors(int field) {
-        int x = xOf(field);
-        int y = yOf(field);
+        int x = iOf(field);
+        int y = jOf(field);
         List<Integer> neighbors = new ArrayList<>();
         if( x > 0 ) {
             neighbors.add(indexOf(x - 1, y));
@@ -162,10 +164,10 @@ public class Board {
     public Boolean hasEmptyNeighbors(int field) {
         for( int i : getNeighbors(field)) {
             if( getField(i) == Color.EMPTY ) {
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
 
