@@ -88,11 +88,18 @@ public class GameTest {
 
         assertEquals(Color.WHITE, game.getTurn().getColor());
 
-        Move invalidMove = new Move(5, Color.WHITE); // Field already occupied
-        assertThrows(IllegalMoveException.class, () -> game.doMove(invalidMove));
+        Move invalidMove1 = new Move(5, Color.WHITE);
+        assertThrows(IllegalMoveException.class, () -> game.doMove(invalidMove1));
 
         Move move2 = new Move(10, Color.WHITE);
         assertDoesNotThrow(() -> game.doMove(move2));
         assertEquals(Color.WHITE, game.getBoard().getField(10));
+
+        Move move3 = new Move(11, Color.BLACK);
+        Move move4 = new Move(13, Color.BLACK);
+        Move move5 = new Move(19, Color.BLACK);
+
+        Move invalidMove2 = new Move(5, Color.WHITE);
+        assertThrows(IllegalMoveException.class, () -> game.doMove(invalidMove2));
     }
 }

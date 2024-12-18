@@ -53,7 +53,7 @@ public class Move {
      * @return the x-coordinate of the field as an integer
      */
     public int getX() {
-        return this.field % Board.DIM;
+        return this.field / Board.DIM;
     }
 
     /**
@@ -61,7 +61,7 @@ public class Move {
      * @return the y-coordinate of the field as an integer
      */
     public int getY() {
-        return this.field / Board.DIM;
+        return this.field % Board.DIM;
     }
 
     /**

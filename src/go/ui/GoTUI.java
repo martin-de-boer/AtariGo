@@ -2,12 +2,14 @@ package go.ui;
 
 import go.ai.strategy.NaiveStrategy;
 import go.ai.strategy.SmartStrategy;
+import go.model.game.Board;
 import go.model.game.Game;
 import go.model.game.Move;
 import go.model.interfaces.Color;
 import go.model.interfaces.Player;
 import go.model.player.ComputerPlayer;
 import go.model.player.HumanPlayer;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -18,6 +20,7 @@ public class GoTUI {
     public static Scanner sc = new Scanner(System.in);
     private boolean exitTUI;
     private Game game;
+    private Move lastMove;
 
     /**
      * Starting point of the game.
@@ -94,14 +97,24 @@ public class GoTUI {
 
     public void runGame() {
         setup();
-        while (game.doMove(game.getTurn().determineMove(game))) {
+        while (winCondition() == false) {
             this.run();
         }
+
+        System.out.println(game.getBoard().toString());
+        System.out.println("Last move: " + lastMove);
     }
+
+    private boolean winCondition() {
+        lastMove = game.getTurn().determineMove(game);
+        return game.doMove(lastMove);
+    }
+
     /**
      *
      */
     public void run() {
         System.out.println(game.getBoard().toString());
+        System.out.println("Last move: " + lastMove);
     }
 }

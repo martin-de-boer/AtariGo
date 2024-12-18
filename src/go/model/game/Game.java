@@ -49,6 +49,11 @@ public class Game {
      */
     //@ pure;
     public boolean isValidMove(Move move) {
+        Board newBoard = board.deepCopy();
+        newBoard.setField(move.getField(), move.getColor());
+        if (newBoard.isGroupSurrounded(newBoard.getGroup(move.getField()))) {
+            return false;
+        }
         return move.getColor() == this.next && board.isValidField(move.getField()) && board.isEmpty(move.getField());
     }
 
@@ -105,7 +110,7 @@ public class Game {
     //@pure
     public Boolean isGameOver(Move move) {
         for (int i : board.getNeighbors(move.getField())) {
-            if (board.isGroupSurrounded(board.getGroup(i))) {
+            if (board.isGroupSurrounded(board.getGroup(i)) && board.getField(i) != Color.EMPTY) {
                 return true;
             }
         }
