@@ -57,10 +57,9 @@ public class Game {
      * @return all legal moves in the current position.
      */
     public List<Move> getValidMoves() {
-        int dim = board.DIM;
         List<Move> moves = new ArrayList<>();
 
-        for (int i = 0; i < dim; i++) {
+        for (int i = 0; i < Board.DIM * Board.DIM; i++) {
             Move move = new Move(i, next);
             if (isValidMove(move)) {
                 moves.add(move);

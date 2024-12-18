@@ -21,6 +21,17 @@ public class Move {
     }
 
     /**
+     * Constructs a new Move object with the specified field position and color.
+     * @param x the x coordinate of the move
+     * @param y the y coordinate of the move
+     * @param color the color of the move
+     */
+    public Move(int x, int y, Color color) {
+        this.field = x + y * Board.DIM;
+        this.color = color;
+    }
+
+    /**
      * Retrieves the field of with this move.
      * @return the field as an integer
      */

@@ -15,7 +15,7 @@ import java.util.Scanner;
  * To play the game, run the main method of this class.
  */
 public class GoTUI {
-    private Scanner sc = new Scanner(System.in);
+    public static Scanner sc = new Scanner(System.in);
     private boolean exitTUI;
     private Game game;
 
@@ -25,6 +25,7 @@ public class GoTUI {
      * and starts the game loop.
      */
     public static void main(String[] args) {
+        sc = new Scanner(System.in);
         GoTUI tui = new GoTUI();
         while (true) {
             tui.runGame();
@@ -35,7 +36,7 @@ public class GoTUI {
      * Default constructor for the GoTUI class.
      */
     public GoTUI() {
-        sc = new Scanner(System.in);
+
     }
 
     /**
@@ -50,11 +51,6 @@ public class GoTUI {
      * Creates a new game and two players according to the input specified by the user.
      */
     public void setup() {
-        Game game = new Game(new HumanPlayer("p1", Color.BLACK), new HumanPlayer("p2", Color.WHITE));
-        game.doMove(new Move(2, Color.BLACK));
-        game.doMove(new Move(20, Color.WHITE));
-        System.out.println(game.getBoard().toString());
-
         Player p1;
         Player p2;
 
@@ -98,7 +94,7 @@ public class GoTUI {
 
     public void runGame() {
         setup();
-        while (!game.doMove(game.getTurn().determineMove(game))) {
+        while (game.doMove(game.getTurn().determineMove(game))) {
             this.run();
         }
     }
@@ -106,6 +102,6 @@ public class GoTUI {
      *
      */
     public void run() {
-
+        System.out.println(game.getBoard().toString());
     }
 }

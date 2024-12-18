@@ -107,6 +107,19 @@ public class Board {
     }
 
 
+    /**
+     * Checks whether the given field coordinates are valid within the bounds of the board.
+     *
+     * @param x the x coordinate of the field to check
+     * @param y the y coordinate of the field to check
+     * @return true if the field coordinates are valid, false otherwise
+     */
+    //@ensures (x >= 0 && x < DIM && y >= 0 && y < DIM) <==> \result == true;
+    //@pure
+    public Boolean isValidField(int x, int y) {
+        return x >= 0 && x < DIM && y >= 0 && y < DIM;
+    }
+
     //Neighbor methods
 
     /**
@@ -172,8 +185,9 @@ public class Board {
         List<Integer> group = new ArrayList<>();
         group.add(field);
 
-        for( int i : group) {
-            for (int j : getNeighbors(i)) {
+        int i = 0;
+        while (i < group.size()) {
+            for (int j : getNeighbors(group.get(i))) {
                 if (group.contains(j)) {
                     continue;
                 }
@@ -185,6 +199,7 @@ public class Board {
                 }
                 group.add(j);
             }
+            i++;
         }
         return group;
     }
