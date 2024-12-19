@@ -130,4 +130,11 @@ public class Game {
         }
         return false;
     }
+
+    public Game deepCopy() {
+        Game newGame = new Game(p1, p2);
+        newGame.board = board.deepCopy();
+        newGame.next = next;
+        return newGame;
+    }
 }

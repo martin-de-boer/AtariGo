@@ -2,6 +2,7 @@ package go.ui;
 
 import go.ai.interfaces.Strategy;
 import go.ai.strategy.NaiveStrategy;
+import go.ai.strategy.SimpleStrategy;
 import go.ai.strategy.SmartStrategy;
 import go.model.game.Game;
 import go.model.game.Move;
@@ -66,7 +67,7 @@ public class GoTUI {
             }
         }
         for (int i = 0; i < Integer.parseInt(str); i++) {
-            tui.runGameSimulate();
+            tui.simulateGame();
             setup(false);
         }
         System.out.println("P1: " + p1Score + " P2: " + p2Score);
@@ -111,12 +112,14 @@ public class GoTUI {
     private static Strategy getStrategyLevel() {
         Boolean exit = false;
         while (!exit) {
-            System.out.print("naive or smart? ");
-            String level = sc.nextLine();
+            System.out.print("naive, simple or smart? ");
+            String level = sc.nextLine().toLowerCase();
 
             switch (level) {
                 case "naive":
                     return new NaiveStrategy();
+                case "simple":
+                    return new SimpleStrategy();
                 case "smart":
                     return new SmartStrategy();
                 default:
@@ -195,7 +198,7 @@ public class GoTUI {
         game = new Game(p1, p2);
     }
 
-    public void runGameSimulate() {
+    public void simulateGame() {
         while (winCondition() == false) { }
 
         Player winner = lastMove.getColor() == Color.BLACK ? game.getP1() : game.getP2();
