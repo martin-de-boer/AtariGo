@@ -64,6 +64,10 @@ public class Move {
         return this.field % Board.DIM;
     }
 
+    public boolean isEqual(Move m) {
+        return this.field == m.getField() && this.color == m.getColor();
+    }
+
     /**
      * Returns a string representation of the move, including the field number,
      * its coordinates (x, y), and the associated color.

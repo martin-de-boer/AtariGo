@@ -1,6 +1,7 @@
 package go.ui;
 
 import go.ai.interfaces.Strategy;
+import go.ai.strategy.BruteforceStrategy;
 import go.ai.strategy.NaiveStrategy;
 import go.ai.strategy.SimpleStrategy;
 import go.ai.strategy.SmartStrategy;
@@ -109,9 +110,26 @@ public class GoTUI {
         return null;
     }
 
+    private static int getDepth() {
+        while (true) {
+            System.out.print("How deep should the search be? ");
+            String level = sc.nextLine();
+            try {
+                int depth = Integer.parseInt(level);
+                if(depth < 0) {
+                    System.out.print("try again\n");
+                } else {
+                    return depth;
+                }
+            } catch (NumberFormatException e) {
+                System.out.print("try again\n");
+            }
+        }
+    }
+
     private static Strategy getStrategyLevel() {
         while (true) {
-            System.out.print("naive, simple or smart? ");
+            System.out.print("naive, simple, smart or bruteforce? ");
             String level = sc.nextLine().toLowerCase();
 
             switch (level) {
@@ -121,6 +139,8 @@ public class GoTUI {
                     return new SimpleStrategy();
                 case "smart":
                     return new SmartStrategy();
+                case "bruteforce":
+                    return new BruteforceStrategy(getDepth());
                 default:
                     System.out.print("try again\n");
             }
