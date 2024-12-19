@@ -101,11 +101,17 @@ public class GameTest {
         assertDoesNotThrow(() -> game.doMove(move2));
         assertEquals(Color.WHITE, game.getBoard().getField(10));
 
-        Move move3 = new Move(11, Color.BLACK);
-        Move move4 = new Move(13, Color.BLACK);
-        Move move5 = new Move(19, Color.BLACK);
+        game.doMove(new Move(11, Color.BLACK));
 
-        Move invalidMove2 = new Move(5, Color.WHITE);
+        game.getBoard().setField(13, Color.BLACK);
+        game.getBoard().setField(19, Color.BLACK);
+
+        Move invalidMove2 = new Move(12, Color.WHITE);
+
         assertThrows(IllegalMoveException.class, () -> game.doMove(invalidMove2));
+
+        Move invalidMove3 = new Move(6, Color.WHITE);
+
+        assertThrows(IllegalMoveException.class, () -> game.doMove(invalidMove3));
     }
 }

@@ -102,10 +102,7 @@ public class Game {
             this.next = this.next.other();
 
         } else {
-            if (!isValidMove(move)) {
-                throw new IllegalMoveException(board, move);
-            }
-            board.setField(move.getField(), move.getColor());
+            throw new IllegalMoveException(board, move);
         }
         if (isGameOver(move)) {
             return true;

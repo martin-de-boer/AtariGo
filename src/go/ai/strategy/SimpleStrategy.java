@@ -23,7 +23,7 @@ public class SimpleStrategy implements Strategy {
 
     //@ pure;
     public Move findWinningMove(Game game) {
-        List<? extends Move> validMoves = game.getValidMoves();
+        List<Move> validMoves = game.getValidMoves();
         for (Move move : validMoves) {
             Game newGame = game.deepCopy();
             if (newGame.doMove(move)) {
@@ -35,22 +35,14 @@ public class SimpleStrategy implements Strategy {
 
     //@ pure;
     public Move findNonLosingMove(Game game) {
-        List<? extends Move> validMoves = game.getValidMoves();
-        List<Move> resMoves = new ArrayList<>();
-        for (Move move : validMoves) {
-            Game newGame = game.deepCopy();
-            newGame.doMove(move);
-            if (findWinningMove(newGame) == null) {
-                resMoves.add(move);
-            }
-        }
+        List<Move> resMoves = findNonLosingMoves(game);
         if (resMoves.isEmpty()) {return null;}
         return resMoves.get((int) Math.floor(Math.random() * (resMoves.size() - 0.01)));
     }
 
     //@ pure;
     public List<Move> findNonLosingMoves(Game game) {
-        List<? extends Move> validMoves = game.getValidMoves();
+        List<Move> validMoves = game.getValidMoves();
         List<Move> resMoves = new ArrayList<>();
         for (Move move : validMoves) {
             Game newGame = game.deepCopy();
