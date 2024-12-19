@@ -110,8 +110,7 @@ public class GoTUI {
     }
 
     private static Strategy getStrategyLevel() {
-        Boolean exit = false;
-        while (!exit) {
+        while (true) {
             System.out.print("naive, simple or smart? ");
             String level = sc.nextLine().toLowerCase();
 
@@ -126,7 +125,6 @@ public class GoTUI {
                     System.out.print("try again\n");
             }
         }
-        return null;
     }
 
     /**
