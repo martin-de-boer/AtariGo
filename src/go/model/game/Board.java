@@ -20,6 +20,10 @@ public class Board {
         for (int i = 0; i < DIM * DIM; i++) {
             fields.add(Color.EMPTY);
         }
+        fields.set(indexOf((DIM-1)/2,(DIM-1)/2), Color.BLACK);
+        fields.set(indexOf((DIM-1)/2-1,(DIM-1)/2), Color.WHITE);
+        fields.set(indexOf((DIM-1)/2-1,(DIM-1)/2-1), Color.BLACK);
+        fields.set(indexOf((DIM-1)/2,(DIM-1)/2-1), Color.WHITE);
     }
 
     /**
