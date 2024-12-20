@@ -1,15 +1,22 @@
-package go.ai.strategy;
+package go.ai.movepicker;
 
 import go.ai.interfaces.Strategy;
+import go.ai.strategy.SimpleStrategy;
 import go.model.game.Game;
 import go.model.game.Move;
 import java.util.List;
 
-public class BruteforceStrategy implements Strategy {
+public class Bruteforce implements Strategy {
     private final int depth;
     private final SimpleStrategy strat;
 
-    public BruteforceStrategy(int depth) {
+    /**
+     * Constructs a Bruteforce strategy object with the specified strategy and search depth.
+     *
+     * @param strat the strategy to be used as the base for determining moves
+     * @param depth the depth to which the brute-force algorithm should explore
+     */
+    public Bruteforce( int depth) {
         this.depth = depth;
         this.strat = new SimpleStrategy();
     }
@@ -22,7 +29,9 @@ public class BruteforceStrategy implements Strategy {
      */
     @Override
     public Move determineMove(Game game) {
-        return calculatePath(game, depth);
+        Move path = calculatePath(game, depth);
+        if (path != null) return path;
+        return strat.determineMove(game);
     }
 
     /**
@@ -48,16 +57,16 @@ public class BruteforceStrategy implements Strategy {
             for (Move move : nonLosing) {
                 Game newGame = game.deepCopy();
                 newGame.doMove(move);
-                if (calculatePath(game, depth - 1) != null) return move;
+                if (calculatePath(newGame, depth - 1) != null) return move;
             }
         } else {
             for (Move move : game.getValidMoves()) {
                 Game newGame = game.deepCopy();
                 newGame.doMove(move);
-                if (calculatePath(game, depth - 1) != null) return move;
+                if (calculatePath(newGame, depth - 1) != null) return move;
             }
         }
-        return strat.determineMove(game);
+        return null;
     }
 
     public int getDepth() {

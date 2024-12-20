@@ -1,7 +1,7 @@
 package go.ui;
 
 import go.ai.interfaces.Strategy;
-import go.ai.strategy.BruteforceStrategy;
+import go.ai.movepicker.Bruteforce;
 import go.ai.strategy.NaiveStrategy;
 import go.ai.strategy.SimpleStrategy;
 import go.ai.strategy.SmartStrategy;
@@ -140,7 +140,7 @@ public class GoTUI {
                 case "smart":
                     return new SmartStrategy();
                 case "bruteforce":
-                    return new BruteforceStrategy(getDepth());
+                    return new Bruteforce(getDepth());
                 default:
                     System.out.print("try again\n");
             }

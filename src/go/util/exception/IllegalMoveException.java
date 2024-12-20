@@ -1,10 +1,7 @@
 package go.util.exception;
 
-import go.model.game.Board;
-import go.model.game.Move;
-
 public class IllegalMoveException extends RuntimeException {
-    public IllegalMoveException(Board board, Move move) {
-        super("Error: This move is illegal! " + move.toString() + "\n" + board.toString());
+    public IllegalMoveException(String board, String move) {
+        super("Error: This move is illegal! " + board + "\n" + move);
     }
 }

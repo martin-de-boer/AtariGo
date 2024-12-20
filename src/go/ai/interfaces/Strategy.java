@@ -2,6 +2,8 @@ package go.ai.interfaces;
 
 import go.model.game.Game;
 import go.model.game.Move;
+import java.util.Dictionary;
+import java.util.Map;
 
 /**
  * This interface defines the basic methods a strategy needs.
@@ -13,6 +15,14 @@ public interface Strategy {
      * @return the next move that the strategy suggests
      */
     Move determineMove(Game game);
+
+    /**
+     * Method that gives every valid move a certain score according to the strategy.
+     * The higher the score, the better it is according to the strategy.
+     * Scores can be negative.
+     * @return a dictionary where every valid move has a certain score
+     */
+    Map<Move, Double> determineMoveScores(Game game);
 
     /**
      * Method to get the name of the strategy.

@@ -102,13 +102,9 @@ public class Game {
             this.next = this.next.other();
 
         } else {
-            throw new IllegalMoveException(board, move);
+            throw new IllegalMoveException(board.toString(), move.toString());
         }
-        if (isGameOver(move)) {
-            return true;
-        } else {
-            return false;
-        }
+        return isGameOver(move);
     }
 
     /**
