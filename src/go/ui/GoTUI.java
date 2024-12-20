@@ -4,7 +4,6 @@ import go.ai.interfaces.Strategy;
 import go.ai.movepicker.Bruteforce;
 import go.ai.strategy.NaiveStrategy;
 import go.ai.strategy.SimpleStrategy;
-import go.ai.strategy.SmartStrategy;
 import go.model.game.Game;
 import go.model.game.Move;
 import go.model.interfaces.Color;
@@ -137,8 +136,6 @@ public class GoTUI {
                     return new NaiveStrategy();
                 case "simple":
                     return new SimpleStrategy();
-                case "smart":
-                    return new SmartStrategy();
                 case "bruteforce":
                     return new Bruteforce(getDepth());
                 default:

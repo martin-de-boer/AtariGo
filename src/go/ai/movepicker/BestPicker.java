@@ -21,4 +21,9 @@ public class BestPicker implements Picker {
         }
         return (maxEntry == null) ? null : maxEntry.getKey();
     }
+
+    @Override
+    public String toString() {
+        return "BestPicker";
+    }
 }

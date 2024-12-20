@@ -1,5 +1,6 @@
 package go.model.player;
 
+import go.ai.interfaces.Picker;
 import go.ai.interfaces.Strategy;
 import go.model.game.Game;
 import go.model.game.Move;
@@ -11,10 +12,12 @@ import go.model.interfaces.Player;
  */
 public class ComputerPlayer implements Player {
     private final Strategy strategy;
+    private final Picker picker;
     private final Color color;
 
-    public ComputerPlayer(Strategy strategy, Color color) {
+    public ComputerPlayer(Strategy strategy, Picker picker, Color color) {
         this.strategy = strategy;
+        this.picker = picker;
         this.color = color;
     }
 
@@ -35,7 +38,7 @@ public class ComputerPlayer implements Player {
      */
     @Override
     public String getName() {
-        return strategy.toString() + "-" + color.toString();
+        return strategy.toString() + "-" + picker.toString() + "-" + color.toString();
     }
 
     /**
@@ -44,6 +47,6 @@ public class ComputerPlayer implements Player {
      */
     @Override
     public Move determineMove(Game game) {
-        return strategy.determineMove(game);
+        return picker.pickMove(game, strategy);
     }
 }

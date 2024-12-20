@@ -16,7 +16,7 @@ public class NaiveStrategy implements Strategy {
      * Method to determine the next move, which is a random one.
      * @return a random legal move
      */
-    @Override
+    @Deprecated
     public Move determineMove(Game game) {
         List<Move> moves = game.getValidMoves();
 

@@ -14,6 +14,7 @@ public interface Strategy {
      * Method to determine the next move according to the strategy.
      * @return the next move that the strategy suggests
      */
+    @Deprecated
     Move determineMove(Game game);
 
     /**
