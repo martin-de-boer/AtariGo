@@ -3,8 +3,7 @@ package go.model.game;
 import go.model.interfaces.Color;
 import go.model.interfaces.Player;
 import go.util.exception.IllegalMoveException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * This class runs a game of Go.
@@ -42,6 +41,34 @@ public class Game {
         return this.board;
     }
 
+    public Boolean isGameOver() {
+        for (int i = 0; i < Board.DIM * Board.DIM; i++) {
+            if (board.getColor(i) != Color.EMPTY && board.numOfLiberties(board.getGroup(i)) == 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Color getWinner() {
+        for (int i = 0; i < Board.DIM * Board.DIM; i++) {
+            if (board.getColor(i) != Color.EMPTY && board.numOfLiberties(board.getGroup(i)) == 0) {
+                return board.getColor(i).other();
+            }
+        }
+        return null;
+    }
+
+    public boolean captures(Move move) {
+        for (int i : board.getNeighbors(move.getField())) {
+            if (!board.isEmpty(i) && 1 == board.numOfLiberties(board.getGroup(i))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
 
     /**
      * Returns the player whose turn it is.
@@ -68,7 +95,7 @@ public class Game {
         Board newBoard = board.deepCopy();
         newBoard.setField(move.getField(), move.getColor());
 
-        return !newBoard.isGroupSurrounded(newBoard.getGroup(move.getField()));
+        return newBoard.numOfLiberties(newBoard.getGroup(move.getField())) != 0;
     }
 
     /**
@@ -87,16 +114,48 @@ public class Game {
         return moves;
     }
 
+    public List<Move> getValidMovesSmart() {
+        List<Pair> scores = new ArrayList<>();
+        double score;
+
+        for (Move move : getValidMoves()) {
+            score = 0.0;
+
+            if (captures(move)) {
+                score = Double.POSITIVE_INFINITY;
+            } else {
+                for (int i : board.getNeighbors(move.getField())) {
+                    if(board.getColor(i) == move.getColor()) {
+                        score += 1.0;
+                    } else if (board.getColor(i) != move.getColor()) {
+                        score += 2.0;
+                    }
+                }
+            }
+
+            scores.add(new Pair(score, move));
+        }
+
+        Collections.sort(scores);
+
+        List<Move> moves = new ArrayList<>();
+
+        for (Pair p : scores) {
+            moves.add(p.moveValue);
+        }
+
+        return moves;
+    }
+
     /**
      * Executes the specified move if it is valid, updates the game state,
      * and checks if the game is over after the move.
      *
      * @param move the move to be executed
-     * @return true if the game is over after the move, false otherwise
      * @throws IllegalMoveException if the move is invalid
      */
     //@requires isValidMove(move);
-    public boolean doMove(Move move) {
+    public void doMove(Move move) {
         if (isValidMove(move)) {
             board.setField(move.getField(), move.getColor());
             this.next = this.next.other();
@@ -104,24 +163,6 @@ public class Game {
         } else {
             throw new IllegalMoveException(board.toString(), move.toString());
         }
-        return isGameOver(move);
-    }
-
-    /**
-     * Checks if the game is over based on the last move.
-     *
-     * @param move the move to check for game-over conditions
-     * @return true if all groups in the neighborhood of the move are surrounded, false otherwise
-     */
-    //@requires board.isValidField(move.getField());
-    //@pure
-    public Boolean isGameOver(Move move) {
-        for (int i : board.getNeighbors(move.getField())) {
-            if (board.isGroupSurrounded(board.getGroup(i)) && board.getField(i) != Color.EMPTY) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public Game deepCopy() {
@@ -129,5 +170,20 @@ public class Game {
         newGame.board = board.deepCopy();
         newGame.next = next;
         return newGame;
+    }
+
+    private static class Pair implements Comparable<Pair> {
+        double doubleValue;
+        Move moveValue;
+
+        Pair(double d, Move m) {
+            this.doubleValue = d;
+            this.moveValue = m;
+        }
+
+        @Override
+        public int compareTo(Pair other) {
+            return Double.compare(this.doubleValue, other.doubleValue);
+        }
     }
 }

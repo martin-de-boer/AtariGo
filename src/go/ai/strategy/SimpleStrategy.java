@@ -3,6 +3,7 @@ package go.ai.strategy;
 import go.ai.interfaces.Strategy;
 import go.model.game.Game;
 import go.model.game.Move;
+import go.model.interfaces.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +20,7 @@ public class SimpleStrategy implements Strategy {
         if (game.getValidMoves().isEmpty()) return null;
         if (findWinningMove(game) != null) return findWinningMove(game);
         if (findNonLosingMove(game) != null) return findNonLosingMove(game);
-        else return game.getValidMoves().get((int) Math.floor(Math.random() * (game.getValidMoves().size() - 0.01)));
+        else return game.getValidMoves().stream().toList().get((int) Math.floor(Math.random() * (game.getValidMoves().size() - 0.01)));
     }
 
     @Override
@@ -32,7 +33,8 @@ public class SimpleStrategy implements Strategy {
 
             // Check if move is winning
             newGame = game.deepCopy();
-            if (newGame.doMove(move)) {
+            newGame.doMove(move);
+            if (newGame.isGameOver()) {
                 score += 100.0;
             }
 
@@ -50,10 +52,11 @@ public class SimpleStrategy implements Strategy {
 
     //@ pure;
     public Move findWinningMove(Game game) {
-        List<Move> validMoves = game.getValidMoves();
+        List<Move> validMoves = game.getValidMoves().stream().toList();
         for (Move move : validMoves) {
             Game newGame = game.deepCopy();
-            if (newGame.doMove(move)) {
+            newGame.doMove(move);
+            if (newGame.isGameOver()) {
                 return move;
             }
         }
@@ -69,7 +72,7 @@ public class SimpleStrategy implements Strategy {
 
     //@ pure;
     public List<Move> findNonLosingMoves(Game game) {
-        List<Move> validMoves = game.getValidMoves();
+        List<Move> validMoves = game.getValidMoves().stream().toList();
         List<Move> resMoves = new ArrayList<>();
         for (Move move : validMoves) {
             Game newGame = game.deepCopy();

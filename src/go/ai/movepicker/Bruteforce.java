@@ -5,6 +5,7 @@ import go.ai.strategy.SimpleStrategy;
 import go.model.game.Game;
 import go.model.game.Move;
 import java.util.List;
+import java.util.Map;
 
 public class Bruteforce implements Strategy {
     private final int depth;
@@ -13,7 +14,6 @@ public class Bruteforce implements Strategy {
     /**
      * Constructs a Bruteforce strategy object with the specified strategy and search depth.
      *
-     * @param strat the strategy to be used as the base for determining moves
      * @param depth the depth to which the brute-force algorithm should explore
      */
     public Bruteforce( int depth) {
@@ -32,6 +32,19 @@ public class Bruteforce implements Strategy {
         Move path = calculatePath(game, depth);
         if (path != null) return path;
         return strat.determineMove(game);
+    }
+
+    /**
+     * Method that gives every valid move a certain score according to the strategy.
+     * The higher the score, the better it is according to the strategy.
+     * Scores can be negative.
+     *
+     * @param game
+     * @return a dictionary where every valid move has a certain score
+     */
+    @Override
+    public Map<Move, Double> determineMoveScores(Game game) {
+        return Map.of();
     }
 
     /**

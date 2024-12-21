@@ -1,5 +1,6 @@
 package go.model.game;
 
+import go.ai.movepicker.BestPicker;
 import go.ai.strategy.NaiveStrategy;
 import go.model.interfaces.Color;
 import go.model.player.ComputerPlayer;
@@ -16,8 +17,8 @@ public class GameTest {
 
     @BeforeEach
     public void setUp() {
-        p1 = new ComputerPlayer(new NaiveStrategy(), Color.BLACK);
-        p2 = new ComputerPlayer(new NaiveStrategy(), Color.WHITE);
+        p1 = new ComputerPlayer(new NaiveStrategy(), new BestPicker(), Color.BLACK);
+        p2 = new ComputerPlayer(new NaiveStrategy(), new BestPicker(), Color.WHITE);
         game = new Game(p1,p2);
     }
 
@@ -70,11 +71,11 @@ public class GameTest {
     public void testIsGameOver() {
         Move move1 = new Move(3, Color.BLACK);
         game.doMove(move1);
-        assertFalse(game.isGameOver(move1));
+        assertFalse(game.isGameOver());
 
         Move move2 = new Move(10, Color.WHITE);
         game.doMove(move2);
-        assertFalse(game.isGameOver(move2));
+        assertFalse(game.isGameOver());
 
         game.getBoard().setField(9, Color.BLACK);
         game.getBoard().setField(11, Color.BLACK);
@@ -83,14 +84,14 @@ public class GameTest {
         game.doMove(finishingMove);
 
 
-        assertTrue(game.isGameOver(finishingMove));
+        assertTrue(game.isGameOver());
     }
 
     @Test
     public void testDoMove() {
         Move move1 = new Move(5, Color.BLACK);
         assertDoesNotThrow(() -> game.doMove(move1));
-        assertEquals(Color.BLACK, game.getBoard().getField(5));
+        assertEquals(Color.BLACK, game.getBoard().getColor(5));
 
         assertEquals(Color.WHITE, game.getTurn().getColor());
 
@@ -99,7 +100,7 @@ public class GameTest {
 
         Move move2 = new Move(10, Color.WHITE);
         assertDoesNotThrow(() -> game.doMove(move2));
-        assertEquals(Color.WHITE, game.getBoard().getField(10));
+        assertEquals(Color.WHITE, game.getBoard().getColor(10));
 
         game.doMove(new Move(11, Color.BLACK));
 

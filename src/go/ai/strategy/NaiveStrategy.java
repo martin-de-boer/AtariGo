@@ -18,7 +18,7 @@ public class NaiveStrategy implements Strategy {
      */
     @Deprecated
     public Move determineMove(Game game) {
-        List<Move> moves = game.getValidMoves();
+        List<Move> moves = game.getValidMoves().stream().toList();
 
         double random = Math.random();
 
@@ -38,7 +38,7 @@ public class NaiveStrategy implements Strategy {
     @Override
     public Map<Move, Double> determineMoveScores(Game game) {
         Map<Move, Double> scores = new HashMap<Move, Double>();
-        List<Move> moves = game.getValidMoves();
+        List<Move> moves = game.getValidMoves().stream().toList();
         for (Move move : moves) {
             scores.put(move, Math.random());
         }

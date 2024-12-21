@@ -3,7 +3,9 @@ package go.model.game;
 import go.model.interfaces.Color;
 import go.util.ConsoleColors;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Represents the board of a game of Go with a predetermined dimension.
@@ -38,13 +40,25 @@ public class Board {
         return x * DIM + y;
     }
 
+    /**
+     * Calculates the row index of a field based on its index.
+     *
+     * @param field the index of the field
+     * @return the row index of the specified field
+     */
     //@pure
-    public int iOf(int field) {
+    public int getRow(int field) {
         return field / DIM;
     }
 
+    /**
+     * Calculates the column index of a field based on its index.
+     *
+     * @param field the index of the field
+     * @return the column index of the specified field
+     */
     //@pure
-    public int jOf(int field) {
+    public int getCol(int field) {
        return field % DIM;
     }
 
@@ -62,11 +76,8 @@ public class Board {
         return copy;
     }
 
-
-    //Tile methods
-
     /**
-     * Sets the tile to a color.
+     * Sets the field to a color.
      * @param field the index of the tile
      * @param color the color that the tile should be
      */
@@ -83,7 +94,7 @@ public class Board {
      */
     //@requires isValidField(field);
     //@pure
-    public Color getField(int field) {
+    public Color getColor(int field) {
         return this.fields.get(field);
     }
 
@@ -112,7 +123,6 @@ public class Board {
         return field >= 0 && field < DIM * DIM;
     }
 
-
     /**
      * Checks whether the given field coordinates are valid within the bounds of the board.
      *
@@ -126,21 +136,20 @@ public class Board {
         return x >= 0 && x < DIM && y >= 0 && y < DIM;
     }
 
-    //Neighbor methods
-
     /**
      * Retrieves the neighboring fields of the specified field on the board.
      *
      * @param field the index of the field for which neighbors are to be retrieved
-     * @return a list of integers representing the indices of the neighboring fields
+     * @return a Set of integers representing the indices of the neighboring fields
      */
     //@requires isValidField(field);
     //@ensures (\forall int i; \result.contains(i); isValidField(i));
     //@pure
-    public List<Integer> getNeighbors(int field) {
-        int x = iOf(field);
-        int y = jOf(field);
-        List<Integer> neighbors = new ArrayList<>();
+    public Set<Integer> getNeighbors(int field) {
+        int x = getRow(field);
+        int y = getCol(field);
+        Set<Integer> neighbors = new HashSet<>();
+
         if( x > 0 ) {
             neighbors.add(indexOf(x - 1, y));
         }
@@ -157,25 +166,102 @@ public class Board {
     }
 
     /**
+     * Retrieves the neighboring fields of a group of fields on the board.
+     *
+     * @param group a set of integers representing the indices of the fields in the group
+     * @return a set of integers representing the indices of neighboring fields
+     *         of the group
+     */
+    public Set<Integer> getNeighbors(Set <Integer> group) {
+
+        Set<Integer> neighbors = new HashSet<>();
+
+        for( int i : group ) {
+            neighbors.addAll(getNeighbors(i));
+        }
+
+        neighbors.removeAll(group);
+
+        return neighbors;
+    }
+
+    /**
      * Checks if the specified field has no empty neighboring fields.
      *
      * @param field the index of the field to check
      * @return true if none of the neighboring fields are empty, false otherwise
      */
     //@requires isValidField(field);
-    //@ensures \result == true <==> (\forall int i; getNeighbors(field).contains(i); getField(i) != Color.EMPTY);
+    //@ensures \result == (\num_of int i; getNeighbors(field).contains(i); getColor(i) != Color.EMPTY);
     //@pure
-    public Boolean hasEmptyNeighbors(int field) {
+    public int numOfLiberties(int field) {
+        int count = 0;
         for( int i : getNeighbors(field)) {
-            if( getField(i) == Color.EMPTY ) {
-                return true;
+            if( getColor(i) == Color.EMPTY ) {
+                count++;
             }
         }
-        return false;
+        return count;
     }
 
+    /**
+     * Calculates the number of liberties (empty neighboring fields)
+     * for a given group of fields on the board.
+     *
+     * @param group a set of integers representing the indices of the group of fields
+     * @return the number of empty neighboring fields (liberties) for the group
+     */
+    public int numOfLiberties(Set<Integer> group) {
+        int count = 0;
+        for( int i : group ) {
+            count += numOfLiberties(i);
+        }
+        return count;
+    }
 
-    //Group methods
+    /**
+     * Determines whether a specified field is an "eye" in the game.
+     * An "eye" is an empty point surrounded by stones of the same group.
+     *
+     * @param field the index of the field to check
+     * @return true if the field is an eye, false otherwise
+     */
+    public boolean isEye(int field) {
+
+        if( getColor(field) != Color.EMPTY ) {
+            return false;
+        }
+
+        if( numOfLiberties(field) != 0 ) {
+            return false;
+        }
+
+        Set<Integer> neighbors = getNeighbors(field);
+
+        Set<Integer> group = getGroup(neighbors.iterator().next());
+
+        return new HashSet<>(group).containsAll(neighbors);
+    }
+
+    /**
+     * Determines if a group of fields is considered "alive" based on the presence
+     * of at least two "eyes" in its neighboring fields.
+     *
+     * @param group a set of integers representing the indices of the fields in the group
+     * @return true if the group has more than one "eye" in its neighboring fields, false otherwise
+     */
+    public boolean isAlive(Set <Integer> group) {
+
+        int numOfEyes = 0;
+
+        for( int i : getNeighbors(group) ) {
+            if( isEye(i) ) {
+                numOfEyes++;
+            }
+        }
+
+        return numOfEyes > 1;
+    }
 
     /**
      * Returns a List of connected fields starting from the specified field.
@@ -184,23 +270,23 @@ public class Board {
      * @return a list of integers representing the connected group
      */
     //@requires isValidField(field);
-    //@requires getField(field) != Color.EMPTY;
+    //@requires getColor(field) != Color.EMPTY;
     //@ensures (\forall int f; \result.contains(f); isValidField(f));
     //@pure
-    public List<Integer> getGroup(int field) {
-        List<Integer> group = new ArrayList<>();
+    public Set<Integer> getGroup(int field) {
+        Set<Integer> group = new HashSet<>();
         group.add(field);
 
         int i = 0;
         while (i < group.size()) {
-            for (int j : getNeighbors(group.get(i))) {
+            for (int j : getNeighbors(group.iterator().next())) {
                 if (group.contains(j)) {
                     continue;
                 }
                 if (!isValidField(j)) {
                     continue;
                 }
-                if (getField(j) != getField(field)) {
+                if (getColor(j) != getColor(field)) {
                     continue;
                 }
                 group.add(j);
@@ -211,26 +297,69 @@ public class Board {
     }
 
     /**
-     * Checks whether the given group of fields is completely surrounded by fields of other colors.
+     * Retrieves all groups of connected fields on the board that are of the specified color.
      *
-     * @param group a list of integers representing the indices of the fields in the group
-     * @return true if the group is completely surrounded, false otherwise
+     * @param color the color of the fields to group
+     * @return a set of sets where each inner set contains the indices of a group of connected fields of the specified color
      */
-    //@requires (\forall int field; group.contains(field); isValidField(field));
-    //@ensures (\forall int field; group.contains(field); hasEmptyNeighbors(field)) <==> \result == true;
-    //@pure
-    public Boolean isGroupSurrounded(List<Integer> group) {
-        for( int i : group ) {
-            if( hasEmptyNeighbors(i) ) {
-                return false;
+    public Set<Set<Integer>> getGroups (Color color) {
+        Set <Set <Integer>> groups = new HashSet<>();
+
+        for( int i = 0; i < Board.DIM * Board.DIM; i++ ) {
+            if( getColor(i) == color ) {
+                Set <Integer> group = getGroup(i);
+                groups.add(group);
             }
         }
-        return true;
+
+        return groups;
     }
+
+    /**
+     * Retrieves all groups of connected fields on the board for both black and white colors.
+     *
+     * @return a set of sets where each inner set contains the indices of a group of connected fields for both black and white colors
+     */
+    public Set<Set<Integer>> getGroups() {
+        Set <Set <Integer>> groups = new HashSet<>();
+        groups.addAll(getGroups(Color.BLACK));
+        groups.addAll(getGroups(Color.WHITE));
+        return groups;
+    }
+
+    /**
+     * Retrieves the set of field indices on the board that match the specified color.
+     *
+     * @param color the desired color to filter fields
+     * @return a set of integers representing the indices of fields with the specified color
+     */
+    public Set<Integer> getFields(Color color) {
+        Set<Integer> fields = new HashSet<>();
+        for (int i = 0; i < Board.DIM * Board.DIM; i++) {
+            if (getColor(i) == color) {
+                fields.add(i);
+            }
+        }
+        return fields;
+    }
+
+    /**
+     * Retrieves the set of all field indices on the board for both black and white colors.
+     *
+     * @return a set of integers representing the indices of all fields occupied by black or white stones
+     */
+    public Set<Integer> getFields() {
+        Set<Integer> f = new HashSet<>();
+        f.addAll(getFields(Color.BLACK));
+        f.addAll(getFields(Color.WHITE));
+        return f;
+    }
+
 
     /**
      * Generates a string representation of the current board.
      * Also works with different DIM values.
+     *
      * @return a string representing the board
      */
     public String toString() {

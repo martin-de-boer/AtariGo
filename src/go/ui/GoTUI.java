@@ -1,6 +1,7 @@
 package go.ui;
 
 import go.ai.interfaces.Strategy;
+import go.ai.movepicker.BestPicker;
 import go.ai.movepicker.Bruteforce;
 import go.ai.strategy.NaiveStrategy;
 import go.ai.strategy.SimpleStrategy;
@@ -167,7 +168,7 @@ public class GoTUI {
                 switch (line) {
                     case "computer" :
                         exit = true;
-                        p1 = new ComputerPlayer(getStrategyLevel(), Color.BLACK);
+                        p1 = new ComputerPlayer(getStrategyLevel(), new BestPicker(), Color.BLACK);
                         break;
 
                     case "human" :
@@ -190,7 +191,7 @@ public class GoTUI {
                 switch (line) {
                     case "computer" :
                         exit = true;
-                        p2 = new ComputerPlayer(getStrategyLevel(), Color.WHITE);
+                        p2 = new ComputerPlayer(getStrategyLevel(), new BestPicker(), Color.WHITE);
                         break;
 
                     case "human" :
@@ -234,13 +235,17 @@ public class GoTUI {
         System.out.println(game.getBoard().toString());
         System.out.println("Last move: " + lastMove);
         System.out.println("Game over!");
+
+
         Player winner = lastMove.getColor() == Color.BLACK ? game.getP1() : game.getP2();
-        System.out.println("Winner: " +  winner.getName());
         if(winner == game.getP1()) {
             p1Score++;
         } else {
             p2Score++;
         }
+
+
+        System.out.println("Winner: " +  winner.getName());
         System.out.println("P1: " + p1Score + " P2: " + p2Score);
     }
 
@@ -249,6 +254,7 @@ public class GoTUI {
             return true;
         }
         lastMove = game.getTurn().determineMove(game);
-        return game.doMove(lastMove);
+        game.doMove(lastMove);
+        return game.isGameOver();
     }
 }

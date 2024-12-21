@@ -49,26 +49,19 @@ public class BoardTest {
     }
 
     @Test
-    public void testSetAndGetFieldIndex() {
+    public void testSetAndGetColorIndex() {
         board.setField(0, Color.BLACK);
-        assertEquals(Color.BLACK, board.getField(0));
-        assertEquals(Color.EMPTY, board.getField(1));
+        assertEquals(Color.BLACK, board.getColor(0));
+        assertEquals(Color.EMPTY, board.getColor(1));
     }
 
     @Test
-    public void testSetAndGetFieldRowCol() {
+    public void testSetAndGetColorRowCol() {
         board.setField(board.indexOf(0, 0), Color.BLACK);
-        assertEquals(Color.BLACK, board.getField(board.indexOf(0, 0)));
-        assertEquals(Color.EMPTY, board.getField(board.indexOf(0, 1)));
-        assertEquals(Color.EMPTY, board.getField(board.indexOf(1, 0)));
-        assertEquals(Color.EMPTY, board.getField(board.indexOf(1, 1)));
-    }
-
-    @Test
-    public void testSetup() {
-        for (int i = 0; i < Board.DIM * Board.DIM; i++) {
-            assertEquals(Color.EMPTY, board.getField(i));
-        }
+        assertEquals(Color.BLACK, board.getColor(board.indexOf(0, 0)));
+        assertEquals(Color.EMPTY, board.getColor(board.indexOf(0, 1)));
+        assertEquals(Color.EMPTY, board.getColor(board.indexOf(1, 0)));
+        assertEquals(Color.EMPTY, board.getColor(board.indexOf(1, 1)));
     }
 
     @Test
@@ -78,13 +71,13 @@ public class BoardTest {
         Board deepCopyBoard = board.deepCopy();
 
         for (int i = 0; i < Board.DIM * Board.DIM; i++) {
-            assertEquals(board.getField(i), deepCopyBoard.getField(i));
+            assertEquals(board.getColor(i), deepCopyBoard.getColor(i));
         }
 
         deepCopyBoard.setField(0, Color.WHITE);
 
-        assertEquals(Color.BLACK, board.getField(0));
-        assertEquals(Color.WHITE, deepCopyBoard.getField(0));
+        assertEquals(Color.BLACK, board.getColor(0));
+        assertEquals(Color.WHITE, deepCopyBoard.getColor(0));
     }
 
     @Test
@@ -103,19 +96,19 @@ public class BoardTest {
     }
 
     @Test
-    public void testIOf() {
-        assertEquals(0, board.iOf(0));
-        assertEquals(0, board.iOf(1));
-        assertEquals(1, board.iOf(9));
-        assertEquals(3, board.iOf(23));
+    public void testGetRow() {
+        assertEquals(0, board.getRow(0));
+        assertEquals(0, board.getRow(1));
+        assertEquals(1, board.getRow(9));
+        assertEquals(3, board.getRow(23));
     }
 
     @Test
-    public void testJOf() {
-        assertEquals(0, board.jOf(0));
-        assertEquals(1, board.jOf(1));
-        assertEquals(2, board.jOf(9));
-        assertEquals(6, board.jOf(27));
+    public void testGetCol() {
+        assertEquals(0, board.getCol(0));
+        assertEquals(1, board.getCol(1));
+        assertEquals(2, board.getCol(9));
+        assertEquals(6, board.getCol(27));
     }
 
     @Test
@@ -132,18 +125,18 @@ public class BoardTest {
     }
 
     @Test
-    public void testHasEmptyNeighbors() {
-        assertTrue(board.hasEmptyNeighbors(0));
-        assertTrue(board.hasEmptyNeighbors(10));
+    public void testNumOfLiberties() {
+        assertEquals(0, board.numOfLiberties(0));
+        assertTrue(board.numOfLiberties(10) == 0);
         board.setField(1, Color.BLACK);
         board.setField(7, Color.WHITE);
-        assertFalse(board.hasEmptyNeighbors(0));
+        assertFalse(board.numOfLiberties(0) == 0);
 
         board.setField(9, Color.BLACK);
         board.setField(11, Color.WHITE);
         board.setField(3, Color.BLACK);
         board.setField(17, Color.WHITE);
-        assertFalse(board.hasEmptyNeighbors(10));
+        assertFalse(board.numOfLiberties(10) == 0);
     }
 
     @Test
@@ -179,18 +172,18 @@ public class BoardTest {
 
         board.setField(8, Color.WHITE);
 
-        assertFalse(board.isGroupSurrounded(board.getGroup(0)));
+        assertEquals(0, board.numOfLiberties(board.getGroup(0)));
 
-        assertFalse(board.isGroupSurrounded(board.getGroup(8)));
+        assertEquals(0, board.numOfLiberties(board.getGroup(8)));
 
         board.setField(9, Color.BLACK);
 
-        assertFalse(board.isGroupSurrounded(board.getGroup(9)));
+        assertFalse(board.numOfLiberties(board.getGroup(9)) == 0);
 
         board.setField(2, Color.WHITE);
 
         board.setField(14, Color.WHITE);
 
-        assertTrue(board.isGroupSurrounded(board.getGroup(0)));
+        assertEquals(0, board.numOfLiberties(board.getGroup(0)));
     }
 }
