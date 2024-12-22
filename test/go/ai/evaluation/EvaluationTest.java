@@ -1,8 +1,10 @@
-package go.model.game;
+package go.ai.evaluation;
 
 import go.ai.interfaces.Picker;
 import go.ai.movepicker.BestPicker;
 import go.ai.strategy.NaiveStrategy;
+import go.model.game.Game;
+import go.model.game.Move;
 import go.model.interfaces.Color;
 import go.model.interfaces.Player;
 import go.model.player.ComputerPlayer;
@@ -86,7 +88,7 @@ public class EvaluationTest {
         game.doMove(new Move(8, Color.BLACK));
         game.doMove(new Move(30, Color.WHITE));
 
-        double score = eval.evaluate(game, 4);
+        double score = eval.evaluate();
         System.out.println(score);
 
         System.out.println(game.getBoard().toString());
@@ -100,17 +102,15 @@ public class EvaluationTest {
         Game game = new Game(p1,p2);
 
         game.doMove(new Move(18, Color.BLACK));
-        game.doMove(new Move(9, Color.WHITE));
-        game.doMove(new Move(8, Color.BLACK));
-        game.doMove(new Move(30, Color.WHITE));
 
+        System.out.println(game.getBoard().toString());
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
 
-        Evaluation eval = new Evaluation(game, 5);
+        Evaluation eval = new Evaluation(game, 1);
         Future future = executor.submit(eval);
         try {
-            future.get(30, TimeUnit.SECONDS); // Set the time out of the prime no. search task
+            future.get(10, TimeUnit.SECONDS); // Set the time out of search task
             executor.shutdown();
         } catch (TimeoutException e) {
             executor.shutdown();

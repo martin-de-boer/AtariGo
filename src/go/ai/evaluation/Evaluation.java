@@ -1,20 +1,22 @@
-package go.model.game;
+package go.ai.evaluation;
 
+import go.model.game.Game;
+import go.model.game.Move;
 import go.model.interfaces.Color;
-import java.util.concurrent.*;
 
 public class Evaluation implements Runnable {
     public double evalScore = 0;
-    public int evalDepth = 0;
-    public Game evalGame = null;
+    public int evalDepth;
+    public Game evalGame;
 
     public Evaluation(Game game, int depth) {
         evalGame = game;
         evalDepth = depth;
     }
 
-    public double evaluate(Game game, int depth) {
-        return evaluate(game, depth, true, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+    public double evaluate() {
+        boolean isMaximizingPlayer = evalGame.getTurn().getColor() == Color.BLACK;
+        return evaluate(evalGame, evalDepth, isMaximizingPlayer, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
     }
 
     public double evaluate(Game game, int depth, boolean isMaximizingPlayer, double alpha, double beta) {
@@ -113,8 +115,8 @@ public class Evaluation implements Runnable {
      */
     @Override
     public void run() {
-        for (int i = 0; i < evalDepth && !Thread.interrupted(); i++) {
-            double score = evaluate(evalGame, i);
+        for (int i = 1; i <= evalDepth && !Thread.interrupted(); i++) {
+            double score = evaluate();
             evalScore = score;
         }
     }
