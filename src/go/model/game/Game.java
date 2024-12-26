@@ -9,10 +9,9 @@ import java.util.*;
  * This class runs a game of Go.
  */
 public class Game {
-    private Player p1;
-    private Player p2;
+    private final Player p1;
+    private final Player p2;
     private Board board;
-    private Color next;
 
 
     /**
@@ -22,7 +21,11 @@ public class Game {
         this.p1 = p1;
         this.p2 = p2;
         this.board = new Board();
-        this.next = Color.BLACK;
+    }
+
+    public Game(Player p1, Player p2, Board board) {
+        this(p1,p2);
+        this.board = board.deepCopy();
     }
 
     public Player getP2() {
@@ -42,12 +45,7 @@ public class Game {
     }
 
     public Boolean isGameOver() {
-        for (int i = 0; i < Board.DIM * Board.DIM; i++) {
-            if (board.getColor(i) != Color.EMPTY && board.numOfLiberties(board.getGroup(i)) == 0) {
-                return true;
-            }
-        }
-        return false;
+        return board.isGameOver();
     }
 
     public Color getWinner() {
@@ -75,7 +73,7 @@ public class Game {
      * @return the player whose turn it is
      */
     public Player getTurn() {
-        return this.next == Color.BLACK ? p1 : p2;
+        return board.getTurn() == Color.BLACK ? p1 : p2;
     }
 
     /**
@@ -88,14 +86,7 @@ public class Game {
         if(!board.isValidField(move.getField())) {
             return false;
         }
-        if (move.getColor() != this.next || ! (board.isEmpty(move.getField()))) {
-            return false;
-        }
-
-        Board newBoard = board.deepCopy();
-        newBoard.setField(move.getField(), move.getColor());
-
-        return newBoard.numOfLiberties(newBoard.getGroup(move.getField())) != 0;
+        return move.getColor() == board.getTurn() && board.isEmpty(move.getField());
     }
 
     /**
@@ -106,7 +97,7 @@ public class Game {
         List<Move> moves = new ArrayList<>();
 
         for (int i = 0; i < Board.DIM * Board.DIM; i++) {
-            Move move = new Move(i, next);
+            Move move = new Move(i, board.getTurn());
             if (isValidMove(move)) {
                 moves.add(move);
             }
@@ -158,7 +149,6 @@ public class Game {
     public void doMove(Move move) {
         if (isValidMove(move)) {
             board.setField(move.getField(), move.getColor());
-            this.next = this.next.other();
 
         } else {
             throw new IllegalMoveException(board.toString(), move.toString());
@@ -168,7 +158,6 @@ public class Game {
     public Game deepCopy() {
         Game newGame = new Game(p1, p2);
         newGame.board = board.deepCopy();
-        newGame.next = next;
         return newGame;
     }
 

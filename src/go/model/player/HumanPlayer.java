@@ -5,14 +5,13 @@ import go.model.game.Move;
 import go.model.interfaces.Color;
 import go.model.interfaces.Player;
 
-import static go.model.game.Board.DIM;
 import static go.ui.GoTUI.sc;
 
 /**
  * This class is used to define a human player. It will use the System input to determine moves.
  */
 public class HumanPlayer implements Player {
-    private String name;
+    private final String name;
     private final Color color;
 
     public HumanPlayer(String name, Color color) {
@@ -35,7 +34,6 @@ public class HumanPlayer implements Player {
      *
      * @return the name of the player
      */
-    @Override
     public String getName() {
         return name;
     }

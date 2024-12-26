@@ -19,35 +19,8 @@ public class SimpleStrategy implements Strategy {
     public Move determineMove(Game game) {
         if (game.getValidMoves().isEmpty()) return null;
         if (findWinningMove(game) != null) return findWinningMove(game);
-        if (findNonLosingMove(game) != null) return findNonLosingMove(game);
+        //if (findNonLosingMove(game) != null) return findNonLosingMove(game);
         else return game.getValidMoves().stream().toList().get((int) Math.floor(Math.random() * (game.getValidMoves().size() - 0.01)));
-    }
-
-    @Override
-    public Map<Move, Double> determineMoveScores(Game game) {
-        Map<Move, Double> result = new HashMap<>();
-        Game newGame;
-
-        for (Move move : game.getValidMoves()) {
-            double score = 1.0;
-
-            // Check if move is winning
-            newGame = game.deepCopy();
-            newGame.doMove(move);
-            if (newGame.isGameOver()) {
-                score += 100.0;
-            }
-
-            // Check if move is nonlosing
-            newGame = game.deepCopy();
-            newGame.doMove(move);
-            if (findWinningMove(newGame) == null) {
-                score += 50.0;
-            }
-
-            result.put(move, score);
-        }
-        return result;
     }
 
     //@ pure;
@@ -56,7 +29,7 @@ public class SimpleStrategy implements Strategy {
         for (Move move : validMoves) {
             Game newGame = game.deepCopy();
             newGame.doMove(move);
-            if (newGame.isGameOver()) {
+            if (newGame.isGameOver() && newGame.getWinner() == game.getTurn().getColor()) {
                 return move;
             }
         }
@@ -67,7 +40,7 @@ public class SimpleStrategy implements Strategy {
     public Move findNonLosingMove(Game game) {
         List<Move> resMoves = findNonLosingMoves(game);
         if (resMoves.isEmpty()) {return null;}
-        return resMoves.get((int) Math.floor(Math.random() * (resMoves.size() - 0.01)));
+        return resMoves.get((int) Math.floor(Math.random() * (resMoves.size())));
     }
 
     //@ pure;
@@ -83,6 +56,4 @@ public class SimpleStrategy implements Strategy {
         }
         return resMoves;
     }
-
-
 }

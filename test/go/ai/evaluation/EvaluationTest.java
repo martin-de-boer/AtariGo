@@ -1,7 +1,5 @@
 package go.ai.evaluation;
 
-import go.ai.interfaces.Picker;
-import go.ai.movepicker.BestPicker;
 import go.ai.strategy.NaiveStrategy;
 import go.model.game.Game;
 import go.model.game.Move;
@@ -16,21 +14,14 @@ import java.util.concurrent.*;
 
 public class EvaluationTest {
     private Game game;
-    private ComputerPlayer p1;
-    private ComputerPlayer p2;
-    private BestPicker picker1;
-    private BestPicker picker2;
     private Evaluation eval;
 
     @BeforeEach
     public void setUp() {
-        picker1 = new BestPicker();
-        picker2 = new BestPicker();
-        p1 = new ComputerPlayer(new NaiveStrategy(), picker1, Color.BLACK);
-        p2 = new ComputerPlayer(new NaiveStrategy(), picker2, Color.WHITE);
-        game = new Game(p1,p2);
+        ComputerPlayer p1 = new ComputerPlayer(new NaiveStrategy(), Color.BLACK);
+        ComputerPlayer p2 = new ComputerPlayer(new NaiveStrategy(), Color.WHITE);
+        game = new Game(p1, p2);
         eval = new Evaluation(game, 5);
-
     }
 
     @Test
@@ -92,32 +83,5 @@ public class EvaluationTest {
         System.out.println(score);
 
         System.out.println(game.getBoard().toString());
-    }
-
-    public static void main(String[] args) throws Exception {
-        Picker picker1 = new BestPicker();
-        Picker picker2 = new BestPicker();
-        Player p1 = new ComputerPlayer(new NaiveStrategy(), picker1, Color.BLACK);
-        Player p2 = new ComputerPlayer(new NaiveStrategy(), picker2, Color.WHITE);
-        Game game = new Game(p1,p2);
-
-        game.doMove(new Move(18, Color.BLACK));
-
-        System.out.println(game.getBoard().toString());
-
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-
-        Evaluation eval = new Evaluation(game, 1);
-        Future future = executor.submit(eval);
-        try {
-            future.get(10, TimeUnit.SECONDS); // Set the time out of search task
-            executor.shutdown();
-        } catch (TimeoutException e) {
-            executor.shutdown();
-        }
-
-        executor.shutdownNow();
-
-        System.out.println(eval.evalScore);
     }
 }

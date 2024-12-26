@@ -1,6 +1,5 @@
 package go.model.game;
 
-import go.ai.movepicker.BestPicker;
 import go.ai.strategy.NaiveStrategy;
 import go.model.interfaces.Color;
 import go.model.player.ComputerPlayer;
@@ -17,8 +16,8 @@ public class GameTest {
 
     @BeforeEach
     public void setUp() {
-        p1 = new ComputerPlayer(new NaiveStrategy(), new BestPicker(), Color.BLACK);
-        p2 = new ComputerPlayer(new NaiveStrategy(), new BestPicker(), Color.WHITE);
+        p1 = new ComputerPlayer(new NaiveStrategy(), Color.BLACK);
+        p2 = new ComputerPlayer(new NaiveStrategy(), Color.WHITE);
         game = new Game(p1,p2);
     }
 

@@ -8,16 +8,10 @@ import go.model.game.Move;
  */
 public interface Player {
     /**
-     * Returns the name of the player.
-     * @return the name of the player
-     */
-    String getName();
-
-    Color getColor();
-
-    /**
      * Determines the next move. Implementation varies with different types of players.
      */
     Move determineMove(Game game);
+
+    Color getColor();
 
 }

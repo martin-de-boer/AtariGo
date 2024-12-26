@@ -1,8 +1,7 @@
 package go.ui;
 
 import go.ai.interfaces.Strategy;
-import go.ai.movepicker.BestPicker;
-import go.ai.movepicker.Bruteforce;
+import go.ai.mcts.MCTS;
 import go.ai.strategy.NaiveStrategy;
 import go.ai.strategy.SimpleStrategy;
 import go.model.game.Game;
@@ -129,7 +128,7 @@ public class GoTUI {
 
     private static Strategy getStrategyLevel() {
         while (true) {
-            System.out.print("naive, simple, smart or bruteforce? ");
+            System.out.print("naive, simple, mcts? ");
             String level = sc.nextLine().toLowerCase();
 
             switch (level) {
@@ -137,8 +136,8 @@ public class GoTUI {
                     return new NaiveStrategy();
                 case "simple":
                     return new SimpleStrategy();
-                case "bruteforce":
-                    return new Bruteforce(getDepth());
+                case "mcts":
+                    return new MCTS();
                 default:
                     System.out.print("try again\n");
             }
@@ -168,7 +167,7 @@ public class GoTUI {
                 switch (line) {
                     case "computer" :
                         exit = true;
-                        p1 = new ComputerPlayer(getStrategyLevel(), new BestPicker(), Color.BLACK);
+                        p1 = new ComputerPlayer(getStrategyLevel(), Color.BLACK);
                         break;
 
                     case "human" :
@@ -191,7 +190,7 @@ public class GoTUI {
                 switch (line) {
                     case "computer" :
                         exit = true;
-                        p2 = new ComputerPlayer(getStrategyLevel(), new BestPicker(), Color.WHITE);
+                        p2 = new ComputerPlayer(getStrategyLevel(), Color.WHITE);
                         break;
 
                     case "human" :
@@ -227,7 +226,7 @@ public class GoTUI {
 
     public void runGame() {
         System.out.println(game.getBoard());
-        while (winCondition() == false) {
+        while (!winCondition()) {
             System.out.println(game.getBoard().toString());
             System.out.println("Last move: " + lastMove);
         }
@@ -244,8 +243,8 @@ public class GoTUI {
             p2Score++;
         }
 
-
-        System.out.println("Winner: " +  winner.getName());
+//
+//        System.out.println("Winner: " +  winner.getName());
         System.out.println("P1: " + p1Score + " P2: " + p2Score);
     }
 

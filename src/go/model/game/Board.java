@@ -28,6 +28,19 @@ public class Board {
         fields.set(indexOf((DIM-1)/2,(DIM-1)/2-1), Color.WHITE);
     }
 
+    public Boolean isGameOver() {
+        for (int i = 0; i < Board.DIM * Board.DIM; i++) {
+            if (!isEmpty(i) && numOfLiberties(getGroup(i)) == 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Color getTurn() {
+        return getFields(Color.BLACK).size() == getFields(Color.WHITE).size() ? Color.BLACK : Color.WHITE;
+    }
+
     /**
      * Calculates the index of a tile on the board based on the given x and y coordinates.
      *
@@ -62,18 +75,12 @@ public class Board {
        return field % DIM;
     }
 
-    /**
-     * Creates and returns a deep copy of the current board.
-     *
-     * @return a new Board object that is an identical but independent copy of the current board
-     */
-    //@pure
+    private Board(List<Color> fields) {
+        this.fields = new ArrayList<>(fields);
+    }
+
     public Board deepCopy() {
-        Board copy = new Board();
-        for (int i = 0; i < DIM * DIM; i++) {
-            copy.fields.set(i, this.fields.get(i));
-        }
-        return copy;
+        return new Board(new ArrayList<>(this.fields));
     }
 
     /**
@@ -197,7 +204,7 @@ public class Board {
     public int numOfLiberties(int field) {
         int count = 0;
         for( int i : getNeighbors(field)) {
-            if( getColor(i) == Color.EMPTY ) {
+            if( isEmpty(i) ) {
                 count++;
             }
         }
@@ -212,11 +219,25 @@ public class Board {
      * @return the number of empty neighboring fields (liberties) for the group
      */
     public int numOfLiberties(Set<Integer> group) {
-        int count = 0;
-        for( int i : group ) {
-            count += numOfLiberties(i);
+        return getLiberties(group).size();
+    }
+
+    public Set<Integer> getLiberties(int field) {
+        Set<Integer> liberties = new HashSet<>();
+        for( int i : getNeighbors(field) ) {
+            if( isEmpty(i) ) {
+                liberties.add(i);
+            }
         }
-        return count;
+        return liberties;
+    }
+
+    public Set<Integer> getLiberties(Set <Integer> group) {
+        Set<Integer> liberties = new HashSet<>();
+        for( int i : group ) {
+            liberties.addAll(getLiberties(i));
+        }
+        return liberties;
     }
 
     /**
@@ -275,23 +296,23 @@ public class Board {
     //@pure
     public Set<Integer> getGroup(int field) {
         Set<Integer> group = new HashSet<>();
-        group.add(field);
+        Set<Integer> visited = new HashSet<>();
+        List<Integer> stack = new ArrayList<>();
+        stack.add(field);
 
-        int i = 0;
-        while (i < group.size()) {
-            for (int j : getNeighbors(group.iterator().next())) {
-                if (group.contains(j)) {
-                    continue;
-                }
-                if (!isValidField(j)) {
-                    continue;
-                }
-                if (getColor(j) != getColor(field)) {
-                    continue;
-                }
-                group.add(j);
+        while (!stack.isEmpty()) {
+            int current = stack.remove(stack.size() - 1);
+            if (visited.contains(current)) {
+                continue;
             }
-            i++;
+            visited.add(current);
+            group.add(current);
+
+            for (int neighbor : getNeighbors(current)) {
+                if (!visited.contains(neighbor) && getColor(neighbor) == getColor(field)) {
+                    stack.add(neighbor);
+                }
+            }
         }
         return group;
     }

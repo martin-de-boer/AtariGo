@@ -1,18 +1,17 @@
-package go.ai.strategy;
+package go.ai.evaluation;
 
-import go.ai.evaluation.Evaluation;
 import go.model.game.Game;
 import go.model.game.Move;
 import go.model.interfaces.Color;
 
-public class SmartStrategy extends Evaluation {
+public class bestMoveEvaluation extends Evaluation{
     public Move evalMove = null;
 
-    public SmartStrategy(Game game, int depth) {
+    public bestMoveEvaluation(Game game, int depth) {
         super(game, depth);
     }
 
-    public Move bestMove() {
+    public Move determineMove() {
         int depth = super.evalDepth;
         Game game = super.evalGame;
 
@@ -75,7 +74,7 @@ public class SmartStrategy extends Evaluation {
     @Override
     public void run() {
         for (int i = 1; i <= super.evalDepth && !Thread.interrupted(); i++) {
-            Move move = bestMove();
+            Move move = determineMove();
             evalMove = move;
         }
     }
