@@ -14,20 +14,43 @@ public class Board {
     public static final int DIM = 7;
     private List<Color> fields;
 
+    //TODO hyper optimise methods for time and disregard memory
+
+    //TODO add JML invariants
+
+    //TODO add asserts for defined conditions
+
     /**
-     * Creates a board with all empty squares.
+     * Creates a board with the starting configuration.
+     * 4 stones in a checkerboard pattern
      */
+    //ensures that the setup happens, rest of the fields are empty (JML)
     public Board() {
         this.fields = new ArrayList<>();
         for (int i = 0; i < DIM * DIM; i++) {
             fields.add(Color.EMPTY);
         }
+        setUp();
+    }
+
+    /**
+     * Sets the middle four squares to the starting position.
+     * Only gets called by the constructor
+     */
+    //ensures that the fields are the color they need to be
+    private void setUp() {
         fields.set(indexOf((DIM-1)/2,(DIM-1)/2), Color.BLACK);
         fields.set(indexOf((DIM-1)/2-1,(DIM-1)/2), Color.WHITE);
         fields.set(indexOf((DIM-1)/2-1,(DIM-1)/2-1), Color.BLACK);
         fields.set(indexOf((DIM-1)/2,(DIM-1)/2-1), Color.WHITE);
     }
 
+    /**
+     * Checks if the game is over.
+     * @return true if there is at least one group enclosed.
+     */
+    //TODO ensures (result) == condition
+    //@pure
     public Boolean isGameOver() {
         for (int i = 0; i < Board.DIM * Board.DIM; i++) {
             if (!isEmpty(i) && numOfLiberties(getGroup(i)) == 0) {
@@ -37,17 +60,28 @@ public class Board {
         return false;
     }
 
+    /**
+     * Returns the color of the next player.
+     * @return color of the next player
+     */
+    //@requires !isGameOver();
+    //@ensures \result == Color.BLACK <==> (getFields(Color.BLACK).size() == getFields(Color.WHITE).size());
+    //@pure
     public Color getTurn() {
+        //TODO if isGameOver then return null
+        //TODO modify this method to also check for White status and return null if neither
         return getFields(Color.BLACK).size() == getFields(Color.WHITE).size() ? Color.BLACK : Color.WHITE;
     }
 
     /**
-     * Calculates the index of a tile on the board based on the given x and y coordinates.
+     * Calculates the index of a field on the board based on the given x and y coordinates.
      *
-     * @param x the x-coordinate of the tile
-     * @param y the y-coordinate of the tile
-     * @return the index of the tile on the board as an integer
+     * @param x the x-coordinate of the field
+     * @param y the y-coordinate of the field
+     * @return the index of the field on the board as an integer
      */
+    //@requires isValidField(x, y);
+    //@ensures isValidField(\result);
     //@pure
     public int indexOf(int x, int y) {
         return x * DIM + y;
@@ -59,6 +93,9 @@ public class Board {
      * @param field the index of the field
      * @return the row index of the specified field
      */
+    //@requires isValidField(field);
+    //@ensures isValidField(\result, 0);
+    //TODO modify for all columns
     //@pure
     public int getRow(int field) {
         return field / DIM;
@@ -70,15 +107,29 @@ public class Board {
      * @param field the index of the field
      * @return the column index of the specified field
      */
+    //@requires isValidField(field);
+    //@ensures isValidField(0, \result);
+    //TODO modify for all rows
     //@pure
     public int getCol(int field) {
        return field % DIM;
     }
 
+    /**
+     * Private constructor for the deepcopy method.
+     * Initializes a Board with the given fields.
+     * @param fields copies the fields array into the new Board
+     */
+    //@ensures this.fields == fields;
     private Board(List<Color> fields) {
         this.fields = new ArrayList<>(fields);
     }
 
+    /**
+     * Deepcopy method.
+     * @return a copy of the board.
+     */
+    //@ensures this.fields == \result.fields;
     public Board deepCopy() {
         return new Board(new ArrayList<>(this.fields));
     }
@@ -179,6 +230,7 @@ public class Board {
      * @return a set of integers representing the indices of neighboring fields
      *         of the group
      */
+    //@pure
     public Set<Integer> getNeighbors(Set <Integer> group) {
 
         Set<Integer> neighbors = new HashSet<>();
@@ -218,10 +270,19 @@ public class Board {
      * @param group a set of integers representing the indices of the group of fields
      * @return the number of empty neighboring fields (liberties) for the group
      */
+    //@pure
     public int numOfLiberties(Set<Integer> group) {
         return getLiberties(group).size();
     }
 
+    /**
+     * Returns the index of the liberties of a field (empty neighbours).
+     * @param field field to check
+     * @return the index of the empty neighbours of the field
+     */
+    //@requires isValidField(field) && !isEmpty(field);
+    //@ensures (\forall int i; \result.contains(i); isValidField(i) && isEmpty(i) && getNeighbors(field).contains(i));
+    //@pure
     public Set<Integer> getLiberties(int field) {
         Set<Integer> liberties = new HashSet<>();
         for( int i : getNeighbors(field) ) {
@@ -232,6 +293,14 @@ public class Board {
         return liberties;
     }
 
+    /**
+     * Returns the index of the liberties of a group.
+     * @param group group to check
+     * @return the empty neighbours of the group
+     */
+    //@requires (\forall int i; group.contains(i); isValidField(i) && !isEmpty(i));
+    //@ensures (\forall int i; \result.contains(i); isValidField(i) && isEmpty(i));
+    //@pure
     public Set<Integer> getLiberties(Set <Integer> group) {
         Set<Integer> liberties = new HashSet<>();
         for( int i : group ) {
@@ -247,6 +316,7 @@ public class Board {
      * @param field the index of the field to check
      * @return true if the field is an eye, false otherwise
      */
+    //@pure
     public boolean isEye(int field) {
 
         if( getColor(field) != Color.EMPTY ) {
@@ -271,6 +341,7 @@ public class Board {
      * @param group a set of integers representing the indices of the fields in the group
      * @return true if the group has more than one "eye" in its neighboring fields, false otherwise
      */
+    //@pure
     public boolean isAlive(Set <Integer> group) {
 
         int numOfEyes = 0;
@@ -285,14 +356,15 @@ public class Board {
     }
 
     /**
-     * Returns a List of connected fields starting from the specified field.
+     * Returns a Set of connected fields starting from the specified field.
      *
      * @param field the starting field index
-     * @return a list of integers representing the connected group
+     * @return a set of integers representing the connected group
      */
     //@requires isValidField(field);
     //@requires getColor(field) != Color.EMPTY;
     //@ensures (\forall int f; \result.contains(f); isValidField(f));
+    //@ensures ((\forall int f; \result.contains(f); getColor(f) == getColor(field)));
     //@pure
     public Set<Integer> getGroup(int field) {
         Set<Integer> group = new HashSet<>();
@@ -323,6 +395,8 @@ public class Board {
      * @param color the color of the fields to group
      * @return a set of sets where each inner set contains the indices of a group of connected fields of the specified color
      */
+    //@pure
+    //TODO optimise
     public Set<Set<Integer>> getGroups (Color color) {
         Set <Set <Integer>> groups = new HashSet<>();
 
@@ -341,6 +415,7 @@ public class Board {
      *
      * @return a set of sets where each inner set contains the indices of a group of connected fields for both black and white colors
      */
+    //@pure
     public Set<Set<Integer>> getGroups() {
         Set <Set <Integer>> groups = new HashSet<>();
         groups.addAll(getGroups(Color.BLACK));
@@ -354,6 +429,8 @@ public class Board {
      * @param color the desired color to filter fields
      * @return a set of integers representing the indices of fields with the specified color
      */
+    //@ensures (\forall int i; fields.contains(i); getColor(i) == color <==> \result.contains(i));
+    //@pure
     public Set<Integer> getFields(Color color) {
         Set<Integer> fields = new HashSet<>();
         for (int i = 0; i < Board.DIM * Board.DIM; i++) {
@@ -369,6 +446,8 @@ public class Board {
      *
      * @return a set of integers representing the indices of all fields occupied by black or white stones
      */
+    //@ensures (\forall int i; fields.contains(i); !isEmpty(i) <==> \result.contains(i));
+    //@pure
     public Set<Integer> getFields() {
         Set<Integer> f = new HashSet<>();
         f.addAll(getFields(Color.BLACK));
@@ -383,6 +462,7 @@ public class Board {
      *
      * @return a string representing the board
      */
+    //@pure
     public String toString() {
         StringBuilder sb = new StringBuilder();
 

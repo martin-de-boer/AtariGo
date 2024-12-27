@@ -10,14 +10,40 @@ import go.model.player.ComputerPlayer;
 import java.util.*;
 
 public class MCTS implements Strategy {
+
+    //lower value = more exploration
+    //higher value = more exploitation
+    //standard is 10
     static final int WIN_SCORE = 10;
+
+
     static final int TIME_LIMIT = 5000;
 
     //higher value = more exploration
     //lower value = more exploitation
     //standard is 1.41
-    static final double UCT_CONSTANT = 7;
+    static final double UCT_CONSTANT = 6;
 
+    public static void main(String[] args) {
+        Board board = new Board();
+
+        board.setField(8, board.getTurn());
+        board.setField(15, board.getTurn());
+        board.setField(10, board.getTurn());
+        board.setField(18, board.getTurn());
+
+        Node root = new Node(board);
+
+        MCTS mcts = new MCTS();
+
+        mcts.search(root);
+    }
+
+    /**
+     * determines the best Move for a game.
+     * @param game
+     * @return
+     */
     @Override
     public Move determineMove(Game game) {
         System.out.println("MCTS simulating");
@@ -36,6 +62,12 @@ public class MCTS implements Strategy {
         return new Move(moves.iterator().next(),turn);
     }
 
+    /**
+     * the main body of mcts
+     * simulates games and chooses the best move based on the simulations
+     * @param root
+     * @return
+     */
     public Node search(Node root) {
         Node winner;
         double timeLimit;
@@ -56,13 +88,20 @@ public class MCTS implements Strategy {
         }
 
         winner = getWinnerNode(root);
-        printScores(root);
-        System.out.format("%nThe optimal node is: %02d%n", root.children.indexOf(winner) + 1);
-        System.out.println(winner.board.toString());
+        //printScores(root);
+        //System.out.format("%nThe optimal node is: %02d%n", root.children.indexOf(winner) + 1);
+        //System.out.println(winner.board.toString());
 
         return winner;
     }
 
+    /**
+     * adds all possible children to a node
+     * with one move played on the board.
+     * isPlayerTurn is flipped
+     * @param node
+     */
+    //TODO add dynamic expansion
     public void addChildNodes(Node node) {
         if(!node.board.isGameOver()) {
             for (int i : node.board.getFields(Color.EMPTY)) {
@@ -73,7 +112,13 @@ public class MCTS implements Strategy {
         }
     }
 
-
+    /**
+     * finds a promising node
+     * nodes not yet visited are favored otherwise decided by UCT
+     * see UCT_CONSTANT
+     * @param rootNode
+     * @return
+     */
     public Node getPromisingNode(Node rootNode) {
         Node promisingNode = rootNode;
 
@@ -142,6 +187,11 @@ public class MCTS implements Strategy {
         }
     }
 
+    /**
+     * "Picker method" gets the node with the highest score
+     * @param rootNode
+     * @return
+     */
     public Node getWinnerNode(Node rootNode) {
         if(rootNode.children.isEmpty()) {
             return null;
@@ -149,11 +199,16 @@ public class MCTS implements Strategy {
         return Collections.max(rootNode.children, Comparator.comparing(c -> c.score));
     }
 
+    /**
+     * prints the scores of each node for testing purposes
+     * @param rootNode
+     */
     public void printScores(Node rootNode) {
         System.out.println("N.\tScore\t\tVisits");
 
         for (int i = 0; i < rootNode.children.size(); i++) {
             System.out.printf("%02d\t%d\t\t%d%n", i + 1, rootNode.children.get(i).score, rootNode.children.get(i).visitCount);
+            System.out.printf("%02d\t%.2f%n", i + 1, (float) (rootNode.children.get(i).score / 10) / (float) rootNode.children.get(i).visitCount);
             System.out.println(rootNode.children.get(i).board.toString());
         }
     }

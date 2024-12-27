@@ -9,9 +9,15 @@ import go.model.game.Move;
 public interface Player {
     /**
      * Determines the next move. Implementation varies with different types of players.
+     * @return a valid Move
      */
+    //@requires !game.isGameOver();
+    //@ensures game.isValidMove(\result);
     Move determineMove(Game game);
 
+    /**
+     * returns the color of the player
+     * @return the color of the player
+     */
     Color getColor();
-
 }

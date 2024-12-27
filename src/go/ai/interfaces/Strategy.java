@@ -12,8 +12,12 @@ import java.util.Map;
 public interface Strategy {
     /**
      * Method to determine the next move according to the strategy.
-     * @return the next move that the strategy suggests
+     * is called by a ComputerPlayer
+     * @return the next valid move that the strategy suggests
      */
+    //@requires !game.isGameOver();
+    //@ensures game.isValidMove(\result);
+    //@pure
     Move determineMove(Game game);
 
     /**

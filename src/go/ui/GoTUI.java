@@ -214,7 +214,9 @@ public class GoTUI {
     }
 
     public void simulateGame() {
-        while (winCondition() == false) { }
+        while (winCondition() == false) {
+            System.out.println(game.getBoard().toString());
+        }
 
         Player winner = lastMove.getColor() == Color.BLACK ? game.getP1() : game.getP2();
         if(winner == game.getP1()) {

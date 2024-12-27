@@ -14,6 +14,8 @@ public enum Color {
      * If the current color is empty, the method returns empty.
      * @return the other color or empty if the current color is empty
      */
+    //TODO maybe argue about this in JML
+    //@pure
     public Color other() {
         if (this == BLACK) {
             return WHITE;
@@ -28,6 +30,7 @@ public enum Color {
      * Checks whether the current color is empty.
      * @return true if the color is empty, false otherwise
      */
+    //@pure
     public boolean isEmpty() {
         return this == EMPTY;
     }
@@ -36,6 +39,8 @@ public enum Color {
      * Method to get the string version of the current color.
      * @return the string version of the current color.
      */
+    //@ensures \result == "Black" || \result == "White" || \result == "Empty";
+    //@pure
     @Override
     public String toString() {
         if (this == BLACK) {
