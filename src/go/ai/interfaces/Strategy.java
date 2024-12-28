@@ -12,18 +12,13 @@ import java.util.Map;
 public interface Strategy {
     /**
      * Method to determine the next move according to the strategy.
-     * @return the next move that the strategy suggests
+     * is called by a ComputerPlayer
+     * @return the next valid move that the strategy suggests
      */
-    @Deprecated
+    //@requires !game.isGameOver();
+    //@ensures game.isValidMove(\result);
+    //@pure
     Move determineMove(Game game);
-
-    /**
-     * Method that gives every valid move a certain score according to the strategy.
-     * The higher the score, the better it is according to the strategy.
-     * Scores can be negative.
-     * @return a dictionary where every valid move has a certain score
-     */
-    Map<Move, Double> determineMoveScores(Game game);
 
     /**
      * Method to get the name of the strategy.

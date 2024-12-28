@@ -78,12 +78,16 @@ public class Evaluation implements Runnable {
         return score;
     }
 
+    public double evaluateAlive(Game game, Color color) {
+        return 0;
+    }
+
     public double evaluateLiberties(Game game, Color color) {
         double libertyScore = 0;
         for (int i : game.getBoard().getFields(color)) {
             int liberties = game.getBoard().numOfLiberties(i);
             if (liberties == 1) {
-                libertyScore -= 50; // Heavily penalize stones in atari
+                libertyScore -= 100; // Heavily penalize stones in atari
             } else {
                 libertyScore += liberties;
             }
