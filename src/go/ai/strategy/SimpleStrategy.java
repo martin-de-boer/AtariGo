@@ -27,7 +27,17 @@ public class SimpleStrategy implements Strategy {
         Move nonLosingMove = findNonLosingMove(board);
         if (nonLosingMove != null) return nonLosingMove;
 
-        else return game.getValidMoves().stream().toList().get((int) Math.floor(Math.random() * (game.getValidMoves().size())));
+        Move move = validMoves.stream().toList().get((int) Math.floor(Math.random() * (game.getValidMoves().size())));
+
+        if(isBadMove(board, move)) move = validMoves.stream().toList().get((int) Math.floor(Math.random() * (game.getValidMoves().size())));
+
+        return move;
+    }
+
+    public Boolean isBadMove(Board board, Move move) {
+        Board newBoard = board.deepCopy();
+        newBoard.setField(move.getField(),move.getColor());
+        return board.numOfLiberties(move.getField()) >= 2;
     }
 
     //@ pure;

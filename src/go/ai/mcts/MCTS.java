@@ -27,10 +27,32 @@ public class MCTS implements Strategy {
     public static void main(String[] args) {
         Board board = new Board();
 
-        board.setField(8, board.getTurn());
-        board.setField(15, board.getTurn());
-        board.setField(10, board.getTurn());
-        board.setField(18, board.getTurn());
+        board.setField(2, Color.BLACK);  // (0,2)
+
+        board.setField(9, Color.BLACK);  // (1,2)
+        board.setField(10, Color.BLACK);  // (1,3)
+        board.setField(11, Color.BLACK); // (1,4)
+
+        board.setField(15, Color.WHITE); // (2,1)
+        board.setField(16, Color.BLACK); // (2,2)
+        board.setField(17, Color.WHITE); // (2,3)
+        board.setField(18, Color.WHITE); // (2,4)
+        board.setField(19, Color.WHITE); // (2,5)
+
+        board.setField(22, Color.WHITE); // (3,1)
+        board.setField(23, Color.WHITE); // (3,2)
+        board.setField(24, Color.BLACK); // (3,3)
+        board.setField(25, Color.BLACK); // (3,4)
+        board.setField(26, Color.WHITE); // (3,5)
+
+        board.setField(30, Color.BLACK); // (4,1)
+        board.setField(31, Color.WHITE); // (4,2)
+        board.setField(32, Color.BLACK); // (4,3)
+
+        board.setField(38, Color.WHITE); // (5,2)
+
+        board.setField(43, Color.BLACK); // (6,0)
+
 
         Node root = new Node(board);
 
@@ -103,13 +125,32 @@ public class MCTS implements Strategy {
      */
     //TODO add dynamic expansion
     public void addChildNodes(Node node) {
+//        System.out.println(node.toString());
         if(!node.board.isGameOver()) {
-            for (int i : node.board.getFields(Color.EMPTY)) {
+            Move winingMove = findWinningMove(node.board);
+            if(winingMove == null) {
+                for (int i : node.board.getFields(Color.EMPTY)) {
+                    Board board = node.board.deepCopy();
+                    board.setField(i, board.getTurn());
+                    node.children.add(new Node(node, !node.isPlayerTurn, board));
+                }
+            } else {
                 Board board = node.board.deepCopy();
-                board.setField(i, board.getTurn());
+                board.setField(winingMove.getField(), board.getTurn());
                 node.children.add(new Node(node, !node.isPlayerTurn, board));
             }
         }
+    }
+
+    //@ pure;
+    public Move findWinningMove(Board board) {
+        for (Set<Integer> group : board.getGroups(board.getTurn().other())) {
+            Set<Integer> liberties = board.getLiberties(group);
+            if(liberties.size() == 1) {
+                return new Move(liberties.iterator().next(), board.getTurn()) ;
+            }
+        }
+        return null;
     }
 
     /**
@@ -171,7 +212,13 @@ public class MCTS implements Strategy {
             game.doMove(move);
         }
 
+//        System.out.println(promisingNode.board.toString());
+//        System.out.println(promisingNode.isPlayerTurn);
+//        System.out.println(game.getBoard().toString());
+
         promisingNode.playerWon = game.getWinner() == playerColor;
+
+//        System.out.println(promisingNode.playerWon);
 
         // Back propagation of the random play.
         while (tempNode != null) {
@@ -182,9 +229,11 @@ public class MCTS implements Strategy {
                 tempNode.score += WIN_SCORE;
             }
 
-            //System.out.println(tempNode.score);
             tempNode = tempNode.parent;
         }
+
+//        System.out.println(promisingNode.score);
+//        System.out.println("-----------------------------------------------------------------");
     }
 
     /**

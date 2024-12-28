@@ -6,10 +6,13 @@ import java.util.ArrayList;
 public class Node {
     Node parent;
     ArrayList<Node> children;
+
     boolean isPlayerTurn;
     boolean playerWon;
+
     int score;
     int visitCount;
+
     Board board;
 
     public Node() {
@@ -35,5 +38,12 @@ public class Node {
     public Node(Node parent, boolean isPlayerTurn, Board board) {
         this(parent, isPlayerTurn);
         this.board = board;
+    }
+
+    @Override
+    public String toString() {
+        return "Node{" + "isPlayerTurn=" +
+                isPlayerTurn + ", playerWon=" + playerWon + ", score=" + score + ", visitCount=" +
+                visitCount + ", board=\n" + board + "}\n";
     }
 }
